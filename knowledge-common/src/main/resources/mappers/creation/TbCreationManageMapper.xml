@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.creation.dao.TbCreationManageDao">
+
+	<!-- 开启二级缓存
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> -->
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.creation.entity.TbCreationManage">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<result column="content" property="content" />
+		<result column="student_name" property="studentName" />
+		<result column="school" property="school" />
+		<result column="is_home" property="isHome" />
+		<result column="create_user" property="createUser" />
+		<result column="create_time" property="createTime" />
+		<result column="status" property="status" />
+		<result column="cover_url" property="coverUrl" />
+		<result column="weight" property="weight" />
+		<result column="update_user" property="updateUser" />
+		<result column="update_time" property="updateTime" />
+		<result column="recommend_works" property="recommendWorks" />
+		<result column="vedio_url" property="vedioUrl" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, type, content, student_name AS studentName, school, is_home AS isHome, create_user AS createUser, create_time AS createTime, status, cover_url AS coverUrl, weight, update_user AS updateUser, update_time AS updateTime, recommend_works AS recommendWorks, vedio_url AS vedioUrl
+    </sql>
+
+</mapper>

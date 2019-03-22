@@ -1,0 +1,20 @@
+package com.knowledge.common.business.activity.service.impl;
+
+import com.knowledge.common.business.activity.entity.TbActivityManage;
+import com.knowledge.common.business.activity.mapper.TbActivityManageDao;
+import com.knowledge.common.business.activity.service.ITbActivityManageService;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ * 活动管理 服务实现类
+ * </p>
+ *
+ * @author xiong
+ * @since 2018-11-14
+ */
+@Service
+public class TbActivityManageServiceImpl extends ServiceImpl<TbActivityManageDao, TbActivityManage> implements ITbActivityManageService {
+
+}

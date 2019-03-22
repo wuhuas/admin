@@ -1,0 +1,114 @@
+
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">資源列表</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+						<div class="am-form-group">
+							<div class="am-btn-toolbar">
+								<div class="am-btn-group am-btn-group-xs">
+									<button type="button" class="am-btn am-btn-default am-btn-success" onclick="loadPage('resource/form')" shiro:hasPermission="resource:add">
+										<span class="am-icon-plus" ></span> 新增
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+ 					<div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
+						<div class="am-form-group tpl-table-list-select">
+							<select data-am-selected="{btnSize: 'sm'}" id="type">
+								<option value="-1">請選擇類型</option>
+								<option value="0" th:selected="${type==0}">目錄</option>
+								<option value="1" th:selected="${type==1}">菜單</option>
+								<option value="2" th:selected="${type==2}">按鈕</option>
+							</select>
+						</div>
+					</div> 
+					<div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+						<div
+							class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+							<input type="text" class="am-form-field " placeholder="資源名稱..." id="name" th:value="${name}" /> <span
+								class="am-input-group-btn">
+								<button
+									class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"
+									type="button" onclick="searchResource()"></button>
+							</span>
+						</div>
+					</div>
+
+					<div class="am-u-sm-12">
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>編號</th>
+									<th>資源名稱</th>
+									<th>上級名稱</th>
+									<th>標識</th>
+									<th>類型</th>
+									<th>圖標</th>
+									<th>URL</th>
+									<th>創建時間</th>
+									<th>更新時間</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record:${page.records}"  th:switch="${record.type}">
+									<td th:text="${record.id}"></td>
+									<td th:text="${record.name}"></td>
+									<td th:text="${record.parentName}"></td>
+									<td th:text="${record.sourceKey}"></td>
+									<td th:case="0" th:text="目錄"></td>
+									<td th:case="1" th:text="菜單"></td>
+									<td th:case="2" th:text="按鈕"></td>
+									<td><i th:attrappend="class=' '+${record.icon}" ></i> </td>
+									<td th:text="${record.sourceUrl}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${record.updateTime!=null?#dates.format(record.updateTime, 'yyyy-MM-dd HH:mm:ss'):''}"></td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'resource/'+${record.id}+'/select\');'" shiro:hasPermission="resource:edit"> <i class="am-icon-pencil" ></i> 編輯</a> 
+											<a href="javascript:;" th:onclick="'javascript:del(\'resource/'+${record.id}+'/delete\',\'resource/listUI\');'" class="tpl-table-black-operation-del del-btn" shiro:hasPermission="resource:delete"><i class="am-icon-trash"></i> 刪除</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+	$('select').selected();
+	var params =['name','type'];
+	
+	initPage([[${page.pages}]],[[${page.current}]],'resource/listUI',params);
+	
+	function searchResource(){
+		var name = $('#name').val()==null?'':$('#name').val();
+		var type = $('#type').val()=='-1'?'':$('#type').val();
+		loadPage('resource/listUI?name='+name+'&type='+type);
+	}
+	
+	]]>
+	</script>
+

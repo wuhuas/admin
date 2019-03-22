@@ -1,0 +1,210 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">新增資訊</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="newsInfoForm" method="post">
+						<div class="am-form-group">
+							<label for="title" class="am-u-sm-2 am-form-label">標題</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="title" class="tpl-form-input" placeholder="请输入標題" name="title"  required="required"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="categoryId" class="am-u-sm-2 am-form-label">資訊類別</label>
+							<div class="am-u-sm-10">
+									<select id="categoryId" name="categoryId" data-am-selected="{searchBox: 1,maxHeight: 300}"> 
+										<option value="0">請選擇類別</option>
+										<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+									</select> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="createUser" class="am-u-sm-2 am-form-label">責編</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="createUser" class="tpl-form-input" placeholder="请输入責編" name="createUser" th:value="${createUser}" readonly="readonly"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="author" class="am-u-sm-2 am-form-label">來源/作者</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="author" class="tpl-form-input" placeholder="请输入來源/作者" name="author" /> 
+							</div>
+						</div>
+						<!-- <div class="am-form-group">
+							<label for="videoUrl" class="am-u-sm-2 am-form-label">視頻鏈接</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="videoUrl" class="tpl-form-input" placeholder="请输入視頻鏈接" name="videoUrl"/> 
+							</div>
+						</div> -->
+						<div class="am-form-group">
+							<label for="weight" class="am-u-sm-2 am-form-label">權重</label>
+							<div class="am-u-sm-10">
+								<input type="number" id="weight" class="tpl-form-input" placeholder="请输入權重" name="weight"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="setTop" class="am-u-sm-2 am-form-label">置頂</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="setTop" value="1" name="setTop" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="openComment" class="am-u-sm-2 am-form-label">允許評論</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="openComment" value="1" name="openComment" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="productStatus" class="am-u-sm-2 am-form-label">狀態（上/下架）</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="status" value="1" name="status" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- <div class="am-form-group">
+							<label for="productStatus" class="am-u-sm-2 am-form-label">首頁推薦</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="isHome" value="1" name="isHome" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div> -->
+						<div class="am-form-group">
+							<label for="coverUrl" class="am-u-sm-2 am-form-label">封面圖</label>
+							<div class="am-u-sm-10">
+								<input id="uploadCover" type="file" name="file" />
+								<input id="coverUrl" type="hidden"  name="coverUrl"/>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="pdf" class="am-u-sm-2 am-form-label">PDF</label>
+							<div class="am-u-sm-10">
+								<input id="uploadPDF" type="file" name="file" />
+								<input id="pdfUrl" type="hidden"  name="pdfUrl"/>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="enclosureUrl" class="am-u-sm-2 am-form-label">附件</label>
+							<div class="am-u-sm-10">
+								<input id="uploadFile" type="file" name="file" />
+								<input id="enclosureUrl" type="hidden"  name="enclosureUrl"/>
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+                            <label for="contentEditor" class="am-u-sm-2 am-form-label">內容</label>
+                            <div class="am-u-sm-10 am-margin-top-xs">
+                                <textarea class="" rows="10" id="content" name="content" placeholder="请输入內容"></textarea>
+                                 <script>
+                                var contentEditor = CKEDITOR.replace('content');
+					            </script>
+                            </div>
+                        </div>
+						
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#newsInfoForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('newsinfo/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+		validateNewsCategoryForm();
+		function validateNewsCategoryForm(){
+		    $('#newsInfoForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		            title : {
+		                required : true
+		            }
+		        },
+		        messages : {
+		        	title : {
+		                required : "標題不能為空"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	CKEDITOR.instances.content.updateElement(); 
+					//判断权重为空则设置为0
+					if($("#weight").val()==""){
+						$("#weight").val("0");
+					}
+		        	commit('newsInfoForm', 'newsinfo/save', 'newsinfo/listUI');
+		        }
+		    });
+	    }
+		initUpImgFileOne('uploadCover','coverUrl','添加封面圖',"");
+		initUpOtherFileOne('uploadPDF','pdfUrl','添加 PDF',"");
+		initUpOtherFileOne('uploadFile','enclosureUrl','添加附件',"");
+		
+		
+		
+		
+		
+		$(".fileinput-remove").click(function(){
+			var clickName=$(this).parent().parent().parent().prev().html();
+			
+			if("封面圖"==clickName){
+				$("#coverUrl").val(null);
+			}else if("PDF"==clickName){
+				$("#pdfUrl").val(null);
+			}else{
+				$("#enclosureUrl").val(null);
+			}
+			
+		});
+		
+		
+		
+		
+		
+		
+		]]>
+	</script>

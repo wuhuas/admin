@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>demo</title>
+    <style>
+        .btn{
+            background: #f56c6c;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid #f56c6c;
+            -webkit-appearance: none;
+            text-align: center;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            margin: 20px 0;
+            transition: .1s;
+            font-weight: 500;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <b>【知識網】雜誌訂單審核通知</b><br><br>
+    <p>親愛的 讀者，<span th:text="${name}"></span></p><br>
+    <p th:text="${content}"></p><br>
+    <p>如有雜誌訂閱疑問，歡迎與我們聯繫。</p><br><br>
+    <img src="https://upknowledge.oss-cn-hongkong.aliyuncs.com/content/20181218/logo20181218160451958.jpg" width="100" height="100" />
+    <p>諮詢電話：2897 7200</p>
+    <p>諮詢郵箱：upknowledge.school@gmail.com</p>
+</div>
+</body>
+</html>

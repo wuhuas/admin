@@ -1,0 +1,124 @@
+<link type="text/css" rel="stylesheet" href="static/jstree/themes/default/style.css"/>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl" th:text="${role.name}"></div>-角色分配
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+				   <!-- 资源树 -->
+				   <div class="am-form-group">
+				      <label><i class="am-icon-fa"></i>&nbsp;&nbsp;資源</label>
+				      <div id="tree"></div>
+				   </div>
+				   <div class="am-form-group">
+						<div class="am-u-sm-10 ">
+							<button type="button" onclick="savePermission()" class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+							<button type="button" onclick="loadPage('role/listUI')" class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="static/jstree/jstree.min.js"></script>   
+<script type="text/javascript" src="static/jstree/jstree.checkbox.js"></script> 
+	<script th:inline="javascript">
+	<![CDATA[
+	$('#tree').jstree({
+             "core" : {
+                 'data' : {
+                     "url" : "role/"+[[${role.id}]]+"/getPermission",
+                     "dataType" : "json"
+                 },
+                 "themes" : {
+                     "responsive" : true
+                 },
+                 "multiple" : true,
+                 "animation" : 200,
+                 "dblclick_toggle" : true,
+                 "expand_selected_onload" : true
+             },
+             "checkbox" : {
+                 "keep_selected_style" : true,
+                  "three_state" : false,
+                 "cascade" : "up"
+             },
+             "plugins" : ["checkbox"]
+         });
+	var ids = [];
+	function savePermission(){     
+		ids = [];
+	    var tree = $('#tree').jstree();
+	    //获取所有选中节点id
+	    var selectedIds = tree.get_checked();
+	    //获取所有选中节点
+	    var selected = tree.get_checked(true);
+	    //遍历节点，获取选中节点的所有父节点
+	    for(var i = 0; i<selected.length; i++){
+	        getParents(tree,selected[i]);
+	    }
+	    ids = ids.concat(selectedIds);  
+	    $.ajax({
+	        type : "POST",
+	        url : 'role/savePermission',
+	        data : {"roleId":[[${role.id}]],"resourceIds":unique(ids)},
+	        
+	        beforeSend : function() {
+	            index = layer.load();
+	        },
+	        success : function(resultdata) {
+	        	console.log(resultdata);
+	            layer.close(index);
+	            if (resultdata.code) {
+	                layer.msg(resultdata.msg, {
+	                    icon : 1
+	                });
+	                loadPage('role/listUI');
+	            } else {
+	                layer.msg(resultdata.msg, {
+	                    icon : 5
+	                });
+	            }
+	        },
+	        error : function(data, errorMsg) {
+	            layer.close(index);
+	            layer.msg(data.responseText, {
+	                icon : 2
+	            });
+	        }
+	    });
+	}
+	
+	/**
+	 * 递归遍历节点，获取该节点的所有父节点
+	 * @param {Object} treeObj  jstree对象
+	 * @param {Object} nodeObj  jstree node节点对象
+	 */
+	function getParents(treeObj,nodeObj)
+	{
+	    var parentId = treeObj.get_parent(nodeObj);
+	    if(parentId != "#")
+	    {
+	        ids.push(parentId);
+	        getParents(treeObj,treeObj.get_node(parentId));
+	    }
+	}
+	 
+	 function unique(arr) {
+		  var result = [], hash = {};
+		  for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+		    if (!hash[elem]) {
+		      result.push(elem);
+		      hash[elem] = true;
+		    }
+		  }
+		  return result;
+	}
+		]]>
+	</script>

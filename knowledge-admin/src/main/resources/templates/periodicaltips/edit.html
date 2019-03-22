@@ -1,0 +1,165 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">编辑成长寄語</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="periodicalTipsForm" method="post">
+						<input type="hidden" name="id" th:value="${record.id}"/>
+
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">標題</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="title" class="tpl-form-input" placeholder="请输入標題" name="title" th:value="${record.title}"/> 
+							</div>
+						</div>
+						
+
+						<div class="am-form-group">
+							<label for="weight" class="am-u-sm-2 am-form-label">權重</label>
+							<div class="am-u-sm-10">
+								<input type="number" id="weight" class="tpl-form-input" placeholder="请输入權重" th:value="${record.weight}" name="weight"/> 
+							</div>
+						</div>
+						
+						
+
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">姓名</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="name" class="tpl-form-input" placeholder="请输入姓名" name="name" th:value="${record.name}"/> 
+							</div>
+						</div>
+						
+
+
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">職位</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="jobPosition" class="tpl-form-input" placeholder="请输入職位" name="jobPosition" th:value="${record.jobPosition}"/> 
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">標籤</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="label" class="tpl-form-input" placeholder="请输入標籤(多個標籤用逗號隔開)" name="label" th:value="${record.label}"/> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+                            <label for="contentEditor" class="am-u-sm-2 am-form-label">刊首寄語</label>
+                            <div class="am-u-sm-10 am-margin-top-xs">
+                                <textarea class="" rows="10" id="content" name="content" placeholder="请输入內容" th:text="${record.content}"></textarea>
+                                 <script>
+                                var content = CKEDITOR.replace('content');
+					            </script>
+                            </div>
+                        </div>
+						
+						
+						
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">首頁推薦</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="isHome" value="1" name="isHome" th:checked="${record.isHome ==1 }" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">上下架狀態</label>
+							<div class="am-u-sm-10">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="status" value="1" name="status" th:checked="${record.status ==1 }" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">寄語人頭像</label>
+							<div class="am-u-sm-10">
+								<input id="uploadFile" type="file" name="file" />
+								<input id="headPortraitUrl" type="hidden"  name="headPortraitUrl" th:value="${record.headPortraitUrl}"/>
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#periodicalTipsForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('periodicalTips/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		content.setData([[${record.content}]]);
+		$('select').selected();
+		
+		validateUserForm();
+		function validateUserForm(){
+		    $('#periodicalTipsForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		        	title : {
+		                required : true
+		            }
+		        },
+		        messages : {
+		        	title : {
+		                required : "廣告標題不能為空"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	CKEDITOR.instances.content.updateElement(); 
+		        	commit('periodicalTipsForm', 'periodicalTips/save', 'periodicalTips/listUI');
+		        }
+		    });
+	    }
+		
+		var imgHtml = '';
+		if([[${record.headPortraitUrl}]] != null){
+			imgHtml = '<img src='+[[${record.headPortraitUrl}]]+' alt="" style="max-width:200px;">'
+		}
+		initUpOtherFileOne('uploadFile','headPortraitUrl','添加頭像',imgHtml);
+		
+		]]>
+	</script>

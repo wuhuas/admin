@@ -1,0 +1,134 @@
+#换行为两个空格
+server:
+  port: 8080
+  session:
+    cookie:
+      name: OAUTH2SESSION
+  context-path: /client
+  
+#log config
+logging: 
+  config: classpath:log4j2.xml
+  level: 
+    root: DEBUG
+    org: 
+      springframework: 
+        web: ERROR
+        beans: ERROR
+        core: ERROR
+    springfox: ERROR
+    
+
+#数据库配置
+spring:
+  datasource:
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://47.52.113.238:3306/knowledge?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true
+    username: root
+    password: Loogk12346
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:  
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  thymeleaf: 
+    mode: HTML5
+    cache: false
+    encoding: UTF-8
+  velocity: 
+    enabled: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  redis:
+    host: 47.52.113.238
+    port: 6379
+    pool:
+      max-idle: 100
+      min-idle: 1
+      max-active: 1000
+      max-wait: -1
+  mail:
+    host: smtp.gmail.com
+    username: up.knowledge.school@gmail.com        #lihuang.goo@gmail.com   #
+    password: Knowledge2018         #zhenjiang
+    protocol: smtp
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.port: 465
+    properties.mail.display.sendmail: up.knowledge.school@gmail.com
+    properties.mail.display.sendname: up.knowledge.school@gmail.com
+    properties.mail.smtp.starttls.enable: true
+    properties.mail.smtp.starttls.required: true
+    properties.mail.smtp.ssl.enable: true
+    from: up.knowledge.school@gmail.com
+    default-encoding: utf-8
+
+security: 
+  oauth2:    
+    resource: 
+      filter-order: 3
+      
+      
+      
+facebook:
+  client:
+    clientId: 386198555461379
+    clientSecret: 3793d0cc36d6a157f318dfd1cd920cf3
+    accessTokenUri: https://graph.facebook.com/oauth/access_token
+    userAuthorizationUri: https://www.facebook.com/dialog/oauth
+    tokenName: oauth_token
+    authenticationScheme: query
+    clientAuthenticationScheme: form
+    scope: email
+  resource:
+    userInfoUri: https://graph.facebook.com/me
+
+google:
+   clientId: 147803835275-cet33ukeu453j901c7f3ugt7jkum9kl0.apps.googleusercontent.com
+ 
+
+      
+mybatis-plus:
+  mapper-locations: classpath*:/mappers/*/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.knowledge.**.entity
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 2
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: false
+    #字段自动填充
+    meta-object-handler: com.knowledge.api.base.config.mybatis.MyMetaObjectHandler
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+    
+    
+kaptcha:
+  height: 50
+  width: 200
+  content:
+    length: 4
+    source: abcdefghjklmnopqrstuvwxyz23456789
+    space: 2
+  font:
+    color: black
+    name: Arial
+    size: 40
+  background-color:
+    from: lightGray
+    to: white
+  border:
+    enabled: true
+    color: white
+    thickness: 1 

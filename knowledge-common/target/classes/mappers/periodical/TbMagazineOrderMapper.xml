@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.periodical.mapper.TbMagazineOrderDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.periodical.entity.TbMagazineOrder">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="school" property="school" />
+		<result column="grade" property="grade" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="subscribe_year" property="subscribeYear" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="reserve_time" property="reserveTime" />
+		<result column="status" property="status" />
+		<result column="whatsapp" property="whatsapp" />
+		<result column="wechat" property="wechat" />
+		<result column="address" property="address" />
+		<result column="pay_voucher_url" property="payVoucherUrl" />
+		<result column="remarks" property="remarks" />
+		<result column="examine_name" property="examineName" />
+		<result column="examine_time" property="examineTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, school, grade, email, phone, subscribe_year AS subscribeYear, start_time AS startTime, end_time AS endTime, reserve_time AS reserveTime, status, whatsapp, wechat, address, pay_voucher_url AS payVoucherUrl, remarks, examine_name AS examineName, examine_time AS examineTime
+    </sql>
+
+</mapper>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>【知識網】</title>
+    <style>
+        .btn{
+            background: #f56c6c;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid #f56c6c;
+            -webkit-appearance: none;
+            text-align: center;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            margin: 20px 0;
+            transition: .1s;
+            font-weight: 500;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <b>【知識網】最新一期香港《知識》雜誌電子版上線啦！</b><br><br>
+    <p>親愛的 讀者，<span th:text="${nickName}"></span></p><br>
+    <p>你好！新一期《知識》雜誌電子版（<span th:text="${releaseMonth}"></span>號）上線啦！</p><br>
+    <p>一起來看看封面故事：</p><br><br>
+    <p><img th:src="@{${coverUrl}}"/></p><br>
+    <p>點擊下方按鈕或連結，開啟你的在線閱讀之旅！</p><br>
+    <a th:href="@{${url}}"><button type="button" class="btn" >點擊閱讀</button></a><br><br>
+    <p>最新一期《知識》雜誌（紙質版）<span th:text="${nextMonth}"></span>刊已出版，這期又有什麼精彩看點呢？歡迎前往香港便利店購買，或立即聯繫我們訂購吧！</p><br>
+    <p>如有雜誌訂閱疑問，歡迎與我們聯繫。</p><br><br>
+    <img src="https://upknowledge.oss-cn-hongkong.aliyuncs.com/content/20181218/logo20181218160451958.jpg" width="100" height="100" />
+    <p>諮詢電話：2897 7200</p>
+    <p>諮詢郵箱：upknowledge.school@gmail.com</p>
+    <a th:href="@{${unsubUrl}}"><button type="button" class="btn" >取消訂閱</button></a>
+</div>
+</body>
+</html>

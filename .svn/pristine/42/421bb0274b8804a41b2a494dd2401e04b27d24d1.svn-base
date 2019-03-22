@@ -1,0 +1,211 @@
+package com.knowledge.api.base.login;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.feilong.core.Validator;
+import com.knowledge.api.base.service.CaptchaService;
+import com.knowledge.common.base.enums.EnumResult;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.base.util.MD5Util;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.member.service.ITbMemberService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * @author jide
+ * @date 2018-12-03
+ */
+@RestController
+@Api(value = "用户API", tags = { "用户操作接口" })
+public class loginApi extends BaseController {
+
+	@Autowired
+	private ITbMemberService memberService;
+
+	@Autowired
+	private CaptchaService captchaService;
+
+	@Autowired
+	protected StringRedisTemplate redisTemplate;
+
+	@SuppressWarnings("unchecked")
+	@PostMapping("/api/login")
+	@ApiOperation(value = "用户登录", notes = "用户登录")
+	public Result login(@RequestBody TbMember user) {
+		if (!captchaService.checkKaptch(user.getCaptachToken(), user.getCaptachCode())) {
+			return fail(EnumResult.ERROR_KAPTCHA);
+		}
+		TbMember member = memberService.selectOne(Condition.create().eq("email", user.getEmail()));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.DEFIN_ACCOUNT);
+		}
+		if (!member.getPassword().equals(MD5Util.md5(user.getPassword()))) {
+			return fail(EnumResult.ERROR_PASSWORD);
+		}
+		if (!member.getActiveState().equals(1)) {
+			return fail(EnumResult.ERROR_ACTIVE_NOT);
+		}
+		return json(memberService.login(member));
+
+	}
+
+	// @UserLoginToken
+	@PostMapping("/api/register")
+	@ApiOperation(value = "用户注册", notes = "用户注册")
+	public Result register(@RequestBody TbMember user) {
+		String hostName = request.getHeader("Referer");
+		if (Validator.isNullOrEmpty(user)) {
+			return fail(EnumResult.ERROR_PARAM);
+		}
+		if (!captchaService.checkKaptch(user.getCaptachToken(), user.getCaptachCode())) {
+			return fail(EnumResult.ERROR_KAPTCHA);
+		}
+		user.setHostName(hostName);
+		TbMember member = memberService.selectOne(Condition.create().eq("email", user.getEmail()));
+		if (Validator.isNotNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_EMAIL_USE);
+		}
+		if (!memberService.insertUser(user)) {
+			return error();
+		}
+		return success();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping("/api/active")
+	@ApiOperation(value = "邮箱验证码验证", notes = "邮箱激活")
+	public Result active(@RequestParam String code) {
+		if (Validator.isNullOrEmpty(code)) {
+			return fail(EnumResult.ERROR_PARAM);
+		}
+		TbMember member = memberService.selectOne(Condition.create().eq("active_code", code));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_ACTIVE_FAIL);
+		}
+		if (member.getActiveState() == 1) {
+			return fail(EnumResult.ERROR_URL_INVALID);
+		}
+		if (!memberService.checkTimeOut(member)) {
+			return fail(EnumResult.ERROR_URL_TIMEOUT);
+		}
+		return success();
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GetMapping("/api/sendMail")
+	@ApiOperation(value = "重新發送邮箱", notes = "邮箱发送 type 注册1 type 2")
+	public Result active(@RequestParam String code,@RequestParam Integer type) {
+		if (Validator.isNullOrEmpty(code)) {
+			return fail(EnumResult.ERROR_PARAM);
+		}
+		TbMember member = memberService.selectOne(Condition.create().eq("active_code", code));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_ACTIVE_FAIL);
+		}
+		memberService.sendMail(member,type);
+		return success();
+
+	}
+
+
+/*	@GetMapping("/api/render")
+	@ApiOperation(value = "获取登录验证码", notes = "获取登录验证码")
+	public Result render() {
+		return json(kaptcha.render());
+	}
+*/
+/*	@PostMapping("/api/valid")
+	public Result validDefaultTime(@RequestParam String code) {
+		// default timeout 900 seconds
+		return json(kaptcha.validate(code));
+	}
+
+	@PostMapping("/api/validTime")
+	public Result validCustomTime(@RequestParam("cToken") String cToken, @RequestParam("captcha") String captcha) {
+		return captchaService.checkKaptch(cToken, captcha) ? success() : error();
+
+	}*/
+
+	/**
+	 * 获取验证码
+	 * 
+	 * @return object
+	 */
+	@GetMapping("/api/captcha")
+	@ApiOperation(value = "获取验证码", notes = "获取验证码")
+	public Result captcha() {
+		return json(captchaService.createKaptch());
+	}
+	
+	@GetMapping("/api/unsubscribe")
+	@ApiOperation(value = "取消订阅", notes = "取消订阅")
+	public Result cancel(@RequestParam String email) {
+		TbMember member = memberService.selectOne(Condition.create().eq("sub_email", email));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_USER_NOT_EXIST);
+		}
+		member.setSubEmail(null);
+		member.setSubTime(null);
+		return member.updateAllColumnById()?success():error();
+	}
+	
+	@GetMapping("/api/queryInfo")
+	@ApiOperation(value = "获取订阅信息", notes = "获取订阅信息")
+	public Result queryInfo(@RequestParam String email) {
+		TbMember member = memberService.selectOne(Condition.create().eq("sub_email", email));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.DEFIN_ACCOUNT);
+		}
+		return json(member);
+	}
+	
+	
+	@GetMapping("/api/querypdf")
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/pdf");
+        response.setHeader("Access-Control-Allow-Origin", "*"); // 解决请求头跨域问题
+        ServletOutputStream sos = response.getOutputStream();
+        //这里的 destUrl目前是固定的,实际应用中需要动态获取
+        String destUrl = "https://upknowledge.oss-cn-hongkong.aliyuncs.com/knowledge/file/181020181226125029519.pdf"; // 远程文件途径，这是我放在远程服务器的
+        //tomcat /webapp下的文件，该链接可通过浏览器直接打开，你可以用它来进行测试；
+        URL url = new URL(destUrl);
+        HttpURLConnection httpUrl = (HttpURLConnection)url.openConnection();
+        // 连接指定的网络资源
+        httpUrl.connect();
+        // 获取网络输入流
+        BufferedInputStream bis = new BufferedInputStream(httpUrl.getInputStream());
+        int b;
+        while ((b = bis.read())!= -1){
+            sos.write(b);
+        }
+        sos.close(); // 这里有点和c语言里的读取文件有点像
+        bis.close();
+    }
+
+
+	
+	
+
+}

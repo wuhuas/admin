@@ -1,0 +1,343 @@
+<style>
+.tpl-table-list-select {
+    text-align: left;
+    width: 470px;
+}
+#statusChange{
+	width:250px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">活動報名管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-lg-12">
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">活動名稱：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="activityName" th:value="${activityName}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">姓名：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="name" th:value="${name}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">學校：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="school" th:value="${school}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-fl">
+								<div class="am-form-group">
+									<label class="am-fl"  style="margin-left:30px;">報名时间：</label>
+									<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								    	<div class="am-fl">
+								    		<input type="text"  id="enrollFrom" class="empty" name="enrollFrom" placeholder="yyyy-mm-dd"  readonly="readonly" th:value="${enrollFrom}"/>
+								    	</div>
+								    	<div class="am-fl" style="margin-left:10px;">
+								    		<span>至</span>
+								    	</div>
+								    	<div class="am-fl"  style="margin-left:10px;">
+								    		<input type="text"  id="enrollTo" class="empty" name="enrollTo" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${enrollTo}"/>
+										</div>
+									</div>
+								</div>
+						</div>
+						
+
+						
+						
+					</div>
+					
+
+					<div class="am-u-lg-12">
+					
+					
+											
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">Email：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="email" th:value="${email}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+					
+					
+											
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">聯絡電話：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="phone" th:value="${phone}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="tpl-table-list-select"  id="statusChange" style="width:230px;">
+								<label>狀態：</label>
+								<select id="status" data-am-selected="{btnWidth: '150px'}"  class="am-fl ">
+									<option value="-1">請選擇狀態</option>
+									<option value="0" th:selected="${status eq '0'}">待確認</option>
+									<option value="1" th:selected="${status eq '1'}">已確認</option>
+									<option value="2" th:selected="${status eq '2'}">已拒絕</option>
+								</select>
+							</div>
+						</div> 
+						
+						
+					
+						<div class="am-fl">
+							<div class="tpl-table-list-select"  id="costChange" style="width:250px;">
+								<label>收費活動：</label>
+								<select id="isCost" data-am-selected="{btnWidth: '150px'}"  class="am-fl ">
+									<option value="0">請選擇狀態</option>
+									<option value="1" th:selected="${isCost eq '1'}">收費活動</option>
+									<option value="2" th:selected="${isCost eq '2'}">免費活動</option>
+								</select>
+							</div>
+						</div> 
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="activityEnroll:excel" type="button" class="am-btn am-btn-warning"
+											onclick="javascript:window.location.href='activityEnroll/export';">
+											<span class="am-icon-download"></span> 導出
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="am-u-lg-12">
+						<table class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>活動名稱</th>
+									<th>姓名</th>
+									<th>學校</th>
+									<th>年班</th>
+									<th>Email</th>
+									<th>聯絡電話</th>
+									<th>報名時間</th>
+									<th>收費活動</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index}+1"></td>
+									<td th:text="${record.activityName}"></td>
+									<td th:text="${record.name}"></td>
+									<td th:text="${record.school}"></td>
+									<td th:text="${record.annualClass}"></td>
+									<td th:text="${record.email}"></td>
+									<td th:text="${record.phone}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td>
+										<span th:if="${record.isCost == 1}">收費</span>
+										<span th:if="${record.isCost == 2}">免費</span>
+									</td>
+									<td>
+										<span th:if="${record.status eq 0}"  class='am-badge am-badge-warning'>待確認</span>
+										<span th:if="${record.status eq 1}"  class='am-badge am-badge-success'>已確認</span>
+										<span th:if="${record.status eq 2}"  class='am-badge am-badge-info'>已拒絕</span>
+									</td>
+									<td class="tpl-table-black-operation">
+										<a href="javascript:;" th:if="${record.status eq 0}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'"  class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="activity:shelf"><i class="am-icon-check"></i>確認</a>
+										<a href="javascript:;" th:onclick="'javascript:loadPage(\'activityEnroll/'+${record.id}+'/select\');'" shiro:hasPermission="activityEnroll:see"> <i class="am-icon-eye"></i> 查看</a> 
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+	         
+		$("#enrollFrom").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#enrollTo").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#enrollTo").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#enrollFrom").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+	    function params() {
+			var activityName = $('#activityName').val();
+			var name = $('#name').val();
+			var school = $('#school').val();
+			var enrollFrom = $('#enrollFrom').val();
+			var enrollTo = $('#enrollTo').val();
+			var email = $('#email').val();
+			var phone = $('#phone').val();
+			var isCost = $('#isCost').val();
+			var status = $('#status').val();
+			
+			var jsonParam = {
+				"activityName":activityName,
+				"name":name,
+				"school":school,
+				"enrollFrom":enrollFrom,
+				"enrollTo":enrollTo,
+				"email":email,
+				"phone":phone,
+				"isCost":isCost,
+				"status":status
+			}
+			return jsonParam;
+	    }
+	 	$('select').selected();
+		//var params =['activityName','name','school','enrollFrom','enrollTo','email','phone','isCost','status'];
+	    initPageToJson([[${page.pages}]],[[${page.current}]],'activityEnroll/listUI',params());		
+	    
+		function search(){
+			loadPageToJson('activityEnroll/listUI',params());
+
+		}
+		
+		
+		
+		
+		function changeStatus(id,status){
+			var context;
+			//if (status == 0) {
+				context = '確認報名吗？'
+			//}
+			
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "activityEnroll/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('activityEnroll/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#activityName").val("");
+			$("#name").val("");
+			$("#school").val("");
+			$("#enrollFrom").removeAttr('value');
+			$("#enrollTo").removeAttr('value');
+			$("#email").val("");
+			$("#phone").val("");
+			$("#status").val('-1').trigger('changed.selected.amui');
+			$("#isCost").val(0).trigger('changed.selected.amui');
+		}
+		]]>
+	</script>
+

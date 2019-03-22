@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.knowledge.common.business.activity.mapper.TbActivityEnrollManageDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.knowledge.common.business.activity.entity.TbActivityEnrollManage">
+		<id column="id" property="id" />
+		<result column="activity_id" property="activityId" />
+		<result column="name" property="name" />
+		<result column="gender" property="gender" />
+		<result column="school" property="school" />
+		<result column="annual_class" property="annualClass" />
+		<result column="email" property="email" />
+		<result column="create_time" property="createTime" />
+		<result column="pay_voucher_url" property="payVoucherUrl" />
+		<result column="examine_name" property="examineName" />
+		<result column="examine_time" property="examineTime" />
+		<result column="status" property="status" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, activity_id AS activityId, name, gender, school,
+		annual_class AS
+		annualClass, email, create_time AS createTime,
+		pay_voucher_url AS
+		payVoucherUrl, examine_name AS examineName,
+		examine_time AS
+		examineTime, status
+	</sql>
+
+	<select id="selectByPage" resultType="com.knowledge.common.business.activity.entity.TbActivityEnrollManage"
+		parameterType="map">
+		select i.*, c.activity_name as activityName,c.is_cost as isCost,c.activity_start_time as activityStartTime,
+		c.activity_end_time as activityEndTime
+		from
+		tb_activity_enroll_manage i left join tb_activity_manage c on
+		i.activity_id = c.id
+		<where>
+
+			<if test="activityName != null and activityName != ''">
+				and c.activity_name like CONCAT('%',#{activityName},'%')
+			</if>
+
+			<if test="name != null and name != ''">
+				and i.name like CONCAT('%',#{name},'%')
+			</if>
+
+
+			<if test="school != null and school != ''">
+				and i.school like CONCAT('%',#{school},'%')
+			</if>
+
+			<if test="enrollFrom != null and enrollFrom != ''">
+				and DATE_FORMAT(i.create_time,'%Y-%m-%d') &gt;=
+				DATE_FORMAT(#{enrollFrom},'%Y-%m-%d')
+			</if>
+
+			<if test="enrollTo != null and enrollTo != ''">
+				and DATE_FORMAT(i.create_time,'%Y-%m-%d') &lt;=
+				DATE_FORMAT(#{enrollTo},'%Y-%m-%d')
+			</if>
+
+			<if test="email != null and email != ''">
+				and i.email like CONCAT('%',#{email},'%')
+			</if>
+
+			<if test="phone != null and phone != ''">
+				and i.phone like CONCAT('%',#{phone},'%')
+			</if>
+
+			<if test="status != null and status !='-1'">
+				and i.status = #{status}
+			</if>
+
+			<if test="isCost != null and isCost!=0">
+				and c.is_cost = #{isCost}
+			</if>
+
+		</where>
+		order by i.create_time desc
+	</select>
+
+
+
+
+	<select id="selectAllById" resultType="com.knowledge.common.business.activity.entity.TbActivityEnrollManage"
+		parameterType="map">
+		select i.*, c.activity_name as activityName,c.is_cost as
+		isCost,c.enroll_start_time as enrollStartTime,
+		c.enroll_end_time as
+		enrollEndTime,c.activity_start_time as activityStartTime,
+		c.activity_end_time as activityEndTime
+		from tb_activity_enroll_manage i
+		left join tb_activity_manage c on
+		i.activity_id = c.id
+		<where>
+			i.id=#{id}
+		</where>
+	</select>
+
+	<select id="selectActivityAndDraft" parameterType="map"
+		resultType="com.knowledge.common.business.activity.bean.ActivityAndDraft">
+		select a.* from ( select taem.id , taem.activity_id as
+		pId,tam.activity_name as name,taem.create_time as createTime,taem.status, 1 as
+		type,taem.create_user as createUser
+		from
+		tb_activity_enroll_manage taem left join tb_activity_manage tam on tam.id = taem.activity_id
+		union all
+		select tcdu.id,
+		tcdu.draft_id
+		as pId, tcdu.name as name,
+		tcdu.draft_time as
+		createTime,tcdu.status, 2 as type,tcdu.create_user
+		as createUser from
+		tb_collection_draft_user tcdu) a
+		<where>
+			a.createUser=#{createUser}
+		</where>
+		order by a.createTime desc
+	</select>
+</mapper>

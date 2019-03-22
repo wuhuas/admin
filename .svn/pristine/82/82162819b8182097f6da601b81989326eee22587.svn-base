@@ -1,0 +1,401 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	width: 15%;
+}
+.am-left{
+	float:left;
+}
+.am-dimmer {
+    z-index: 1;
+}
+.am-modal-bd{
+	height:100%;
+	margin-top:10px;
+}
+.am-modal-hd {
+    padding: 15px 10px 5px 10px;
+    font-size: 24px;
+    font-weight: 500;
+}
+.am-modal-dialog {
+    border: 2px solid lightgray;
+}
+
+#email-alert{
+	display: none;
+	position: fixed;
+	top: 30%;
+	left: 40%;
+	border: 6px solid lightblue;
+	background-color: white;
+	z-index:1002;
+	overflow: auto;
+	width: 35%;
+	/* position: fixed;
+	left: 30%;
+	background-color: whitesmoke;
+    border: 2px solid; */
+}
+.email-hd,.email-bd{
+	text-align: center;
+	vertical-align: middle;
+}
+.email-hd{
+	height:50px;
+	color: black;
+	font-weight: bold;
+	font-size: 24px;
+}
+.email-bd{
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.email-btn{
+	height: 50px;
+	float: right;
+	margin-right: 20px;
+}
+.btn{
+	width: 80px;
+    height: 35px;
+}
+.black_overlay{
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index:1001;
+	-moz-opacity: 0.8;
+	opacity:.80;
+	filter: alpha(opacity=80);
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">精選期刊管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								雜誌名稱：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="雜誌名稱" id="name" th:value="${name}" />
+								</div>
+							</div>
+						</div>
+						
+						<input type="hidden" id="sort" name="sort" th:value="${sort}"/>
+						<input type="hidden" id="isAsc" name="isAsc" th:value="${isAsc}"/>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								出版期數：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="number" class="am-form-field empty" placeholder="出版期數" id="periodsNumber" th:value="${periodsNumber}" min="0"/>
+								</div>
+							</div>
+						</div>
+	
+						<div class="am-u-sm-12 am-u-lg-6">
+							<label class="label-weight am-left fabu">發行月： </label>
+							<div classs="am-input-group am-datepicker-date date">
+								<input type="text" id="releaseMonth" class="empty date-input" name="releaseMonth" placeholder="yyyy-mm" readonly="readonly" th:value="${releaseMonth}" /> 
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-7">
+							<label class="label-weight am-left fabu">發佈时间： </label>
+							<div classs="tpl-form-border-form">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="periodical:add" type="button"
+											class="am-btn am-btn-default am-btn-success"
+											onclick="loadPage('periodical/form')">
+											<span class="am-icon-plus"></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>雜誌名稱</th>
+									<th>出版期數</th>
+									<th>發行月</th>
+									<th>發佈人</th>
+									<th>發佈時間<div id="click-sort"><div id="sort-asc" onclick="sortAsc('create_time');" th:style="${(sort eq 'create_time' && isAsc eq 'true') ? 'color:#666565' : ''}"><i class="am-icon-sort-asc"></i></div><div  id="sort-desc" onclick="sortDesc('create_time');" th:style="${(sort eq 'create_time' && isAsc eq 'false') ? 'color:#666565' : ''}"><i class="am-icon-sort-desc"></i></div></div></th>
+									<th>發送郵件通知</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index +1}"></td>
+									<td th:text="${record.name}"></td>
+									<td th:text="${'總第 '+record.periodsNumber+' 期'}"></td>
+									<td th:text="${record.releaseMonth}"></td>
+									<td th:text="${record.createUser}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.sendEmail eq 1}" class='am-badge am-badge-success'>已发送</span>
+										<span th:if="${record.sendEmail eq 2}" class='am-badge am-badge-warning'>待发送</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'periodical/'+${record.id}+'/select\');'" shiro:hasPermission="periodical:edit"> <i class="am-icon-pencil"></i> 編輯</a>
+											<a href="javascript:;" class="tpl-table-black-operation-warning warning-btn" th:onclick="'javascript:del(\'periodical/'+${record.id}+'/delete\',\'periodical/listUI\');'" shiro:hasPermission="periodical:delete"> <i class="am-icon-trash"></i> 删除</a>
+											<a href="javascript:;" th:if="${record.sendEmail == 2}" id="doc-prompt-toggle" shiro:hasPermission="periodical:email" th:onclick="'sendEmail('+${record.id}+');'"> <i class="am-icon-send"></i> 邮件通知</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					
+					<!--弹出层时背景层DIV-->
+					<div id="email-background" class="black_overlay">
+					</div>
+					<div id="email-alert">
+						<div class="email-hd">發送郵件</div>
+						<div class="email-bd">
+							<input id="uploadImg" type="file" name="file" accept="image/*" />
+							<input id="coverUrl" type="hidden"  name="coverUrl"/>
+							<input id="id" type="hidden">
+							<span class="tishi" style="color:red;display: none;">× 請先上傳雜誌封面圖!</span>
+						</div>
+						<div class="email-ft">
+							<div class="email-btn">
+								<div class="am-btn-group am-btn-group-xs">
+									<button type="button" class="am-btn am-btn-default am-btn-info btn" onclick="cancelBtn();">
+										 取消
+									</button>
+									<button type="button" style="margin-left: 10px;" class="am-btn am-btn-default am-btn-success btn" onclick="send()">
+										<i class="am-icon-send"></i>發送
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#releaseMonth").datepicker({
+			format: 'yyyy-mm',
+			viewMode: 'years',
+			minViewMode: 'months',
+			autoClose:true
+	    }); 
+		
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+	    
+	    
+	    $('#email-alert').hide();
+	    //点击提交的时候
+	    function sendEmail(id) {
+	    	$('#email-background').show();
+	    	$('#email-alert').show();
+	    	$('#id').val(id);
+		}
+	    
+	    $("email-alert").blur(function () {
+	    	cancelBtn();
+		})
+	    
+	    function cancelBtn() {
+	    	/* $('#email-background').hide();
+	    	$('#email-alert').hide();
+	    	$("#coverUrl").val("");
+	    	$("#id").val("");
+	    	initUpImgFileOne('uploadImg','coverUrl','添加封面圖',"");
+	    	$(".tishi").hide(); */
+	    	loadPageToJson('periodical/listUI',params());
+		}
+	    
+	    
+	    
+	    function send() {
+	    	var id = $('#id').val();
+	    	if($("#coverUrl").val() == ''){
+	    		$(".tishi").show();
+	    	}else{
+				cancelBtn();
+				$.ajax({
+		            type : "GET",
+		            url :  'periodical/sendEmail?id='+id+'&coverUrl='+$("#coverUrl").val(),
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('periodical/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                    cancelBtn();
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		                cancelBtn();
+		            }
+		        });
+	    	}
+		}
+	    
+	    
+	 	$('select').selected();
+	 	initUpImgFileOne('uploadImg','coverUrl','添加封面圖',"");
+	 	function params(sort,isAsc) {
+		 	var name = $('#name').val();
+			var periodsNumber = $('#periodsNumber').val();
+			var releaseMonth = $('#releaseMonth').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			
+			if($("#sort").val()!=null && sort==null){
+				sort=$("#sort").val();
+			}
+			
+			if($("#isAsc").val()!=null && isAsc==null){
+				isAsc=$("#isAsc").val();
+			}
+			
+			
+			var jsonParam = {
+				"name":name,
+				"periodsNumber":periodsNumber,
+				"releaseMonth":releaseMonth,
+				"from":from,
+				"to":to,
+				"sort":sort,
+				"isAsc":isAsc
+			}
+			return jsonParam;
+	 	}
+		initPageToJson([[${page.pages}]],[[${page.current}]],'periodical/listUI',params());		
+	    
+		function search(){
+			loadPageToJson('periodical/listUI',params());
+		}
+		
+		function allEmpty() {
+			$("#name").val('');
+			$("#periodsNumber").val('');
+			
+			$("#sort").val('id');
+			$("#isAsc").val('false');
+			
+			
+			$(".empty").removeAttr('value');
+		}
+		
+		
+		
+		function sortAsc(clum) {
+			$("#sort-desc").css("color","#c0bfbf");
+			$("#sort-asc").css("color","#666565");
+			loadPageToJson('periodical/listUI',params(clum,true));
+			console.log(params(clum,true))
+		}
+		
+		function sortDesc(clum) {
+			$("#sort-desc").css("color","#666565");
+			$("#sort-asc").css("color","#c0bfbf");
+			loadPageToJson('periodical/listUI',params(clum,false));
+			console.log(params(clum,false))
+		}
+		
+		
+		
+		]]>
+	</script>

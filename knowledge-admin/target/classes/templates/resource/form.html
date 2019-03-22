@@ -1,0 +1,161 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">新增资源</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="dataForm" method="post">
+						<div class="am-form-group">
+							<label for="type" class="am-u-sm-2 am-form-label">类型</label>
+							<div class="am-u-sm-10">
+							<select data-am-selected="{btnSize: 'sm'}" id="type" name="type">
+								<option value="0">目录</option>
+								<option value="1">菜单</option>
+								<option value="2">按钮</option>
+							</select>
+							</div>
+						</div>
+						<div class="am-form-group"  id="parentDiv">
+							<label for="parentId" class="am-u-sm-2 am-form-label">上级名称</label>
+							<div class="am-u-sm-10">
+								<select data-am-selected="{searchBox: 1,maxHeight: 300}"  style="display: none;" id="parentId" name="parentId">
+									<option value="0">请选择</option>
+									<option th:each="resource : ${resources}" th:value="${resource.id}" th:utext="${resource.text}"></option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="name" class="am-u-sm-2 am-form-label">资源名称</label>
+							<div class="am-u-sm-10">
+								<input type="text"  class="tpl-form-input" placeholder="请输入名称" id="name" name="name" /> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="sourceKey" class="am-u-sm-2 am-form-label">资源标识</label>
+							<div class="am-u-sm-10">
+								<input type="text" class="tpl-form-input" placeholder="请输入标识" id="sourceKey" name="sourceKey" /> 
+							</div>
+						</div>
+						<div class="am-form-group" id="iconDiv">
+							<label for="iconBtn" class="am-u-sm-2 am-form-label">目录图标</label>
+							<div class="am-u-sm-10">
+								<i id="iconShow"></i>
+								<input type="button" id="iconBtn" class="am-btn am-btn-primary" value="选择图标" onclick="initIcon()" /> 
+								<input type="hidden" id="icon"  name="icon"/> 
+							
+							</div>
+						</div>
+						<div class="am-form-group" id="urlDiv">
+							<label for="sourceUrl" class="am-u-sm-2 am-form-label">资源Url</label>
+							<div class="am-u-sm-10">
+								<input type="text"  class="tpl-form-input" placeholder="请输入Url" id="sourceUrl" name="sourceUrl" /> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="description" class="am-u-sm-2 am-form-label">资源描述</label>
+							<div class="am-u-sm-10">
+								<input type="text"  class="tpl-form-input" placeholder="请输入描述" id="description" name="description" /> 
+							</div>
+						</div>
+
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#dataForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('resource/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+	$('select').selected();
+	validateForm();
+	function initIcon()
+	{
+	        iconLayer = layer.open({
+	            type : 2,
+	            scrollbar: false,
+	            content : 'resource/icon',
+	            area : 'auto',
+	            maxmin : true,
+	            shift : 4,
+	            title : '<i class="am-icon-cogs"></i>&nbsp;选择图标'
+	        });
+	        //弹出即全屏
+	        layer.full(iconLayer);
+
+	}
+	
+	function validateForm(){    
+	    $('#dataForm').validate({
+	        errorElement : 'span',
+	        errorClass : 'am-icon-times',
+	        focusInvalid : true,
+	        onkeyup:false,
+	        ignore : "",
+	        rules : {
+	            name : {
+	                required : true
+	            },
+	            sourceKey : {
+	                required : true
+	            }
+	        },
+	        messages : {
+	        	name : {
+	                required : "请填写名称"
+	            },
+	            sourceKey : {
+	                required : "请填写标识"
+	            },
+	            sourceUrl :{
+	            	required : "请填写URL"
+	            }
+	        },
+	        submitHandler : function(form) {
+	        	commit('dataForm', 'resource/save', 'resource/listUI');
+	        }
+	    });
+	}
+	 $('#parentDiv').hide();  
+	 $('#urlDiv').hide();
+	 
+	 $('#type').bind('change', function(e) {
+		var type = $('#type').val();
+		if(type==1){
+			$('#parentDiv').show();
+			$('#urlDiv').show();
+			$('#iconDiv').hide();  
+			$('#icon').val('');
+			$('#iconShow').removeAttr('class');
+		}else if(type==0){
+			$('#iconDiv').show();  
+			$('#parentDiv').hide();
+			$('#urlDiv').hide();
+			$('#sourceUrl').val('');
+		}else if(type==2){
+			$('#parentDiv').show();
+			$('#urlDiv').hide();
+			$('#iconDiv').hide();  
+			$('#icon').val('');
+			$('#iconShow').removeAttr('class');
+		}
+	 });
+		]]>
+	</script>

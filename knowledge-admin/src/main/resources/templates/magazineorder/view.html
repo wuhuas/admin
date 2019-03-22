@@ -1,0 +1,181 @@
+<style>
+.magazineorder-all{
+	margin-left:50px;
+}
+.am-g{
+	border-bottom: 1px solid #5a5252;
+}
+.border-right{
+	border-right: 1px solid #5a5252;
+}
+.form-title{
+	color:black;
+}
+.border-left{
+	border-left: 1px solid #5a5252;
+}
+.border-top{
+	border-top: 1px solid #5a5252;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">知識雜誌訂閱申請表</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<div class="magazineorder-all">
+						<div class="am-g am-g-fixed border-top border-left">
+						  <div class="am-u-sm-3 border-right form-title">姓名</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.name =='' || record.name == null  ? '&nbsp;' : record.name}"></div>
+						  <div class="am-u-sm-3 border-right form-title">年級</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.grade =='' || record.grade == null  ? '&nbsp;' : record.grade}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">學校</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.school =='' || record.school == null  ? '&nbsp;' : record.school}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">Email</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.email =='' || record.email == null  ? '&nbsp;' : record.email}"></div>
+						  <div class="am-u-sm-3 border-right form-title">聯絡電話</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.phone =='' || record.phone == null  ? '&nbsp;' : record.phone}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">Whatsapp</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.whatsapp =='' || record.whatsapp == null  ? '&nbsp;' : record.whatsapp}"></div>
+						  <div class="am-u-sm-3 border-right form-title">微信</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.wechat  =='' || record.wechat == null  ? '&nbsp;' : record.wechat}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">通信地址</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.address =='' || record.address == null  ? '&nbsp;' : record.address}"></div>
+						</div>
+					</div>
+					
+					<hr/>
+					<div class="magazineorder-all">
+						<div class="am-g am-g-fixed border-top border-left">
+						  <div class="am-u-sm-3 border-right form-title">訂購年限</div>
+						  <div class="am-u-sm-9 border-right">
+						 	 <span th:if="${record.type == 1}" th:text="${record.subscribeYear+'年'}"></span>
+						 	 <span th:if="${record.type == 2}">&nbsp;</span>
+						  </div>
+						</div>
+						
+						<div class="am-g am-g-fixed border-left" th:if="${record.type} eq '1'">
+						  <div class="am-u-sm-3 border-right form-title">付款憑證</div>
+						  <div class="am-u-sm-9 border-right">
+						  
+						  <a th:each="urls,usrlsStat: ${#strings.listSplit(record.payVoucherUrl,',')}" th:href="@{${urls}}" target="view_window" th:text="憑證賬單+${usrlsStat.index+1}" style="padding-right:15px;" ></a>
+						  
+						  </div>
+						</div>
+						
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">備註</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.remark =='' || record.remark == null  ? '&nbsp;' : record.remark}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">預定時間</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.reserveTime == null  ? '&nbsp;' : #dates.format(record.reserveTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">審核人</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.examineName =='' || record.examineName == null  ? '&nbsp;' : record.examineName}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">審核時間</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.examineTime == null  ? '&nbsp;' : #dates.format(record.examineTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						</div>
+					</div>
+					
+					<hr/>
+					<div class="am-form-group">
+						<div class="am-u-sm-10 am-u-sm-push-2">
+							
+							<button type="button" th:if="${record.examineName =='' || record.examineName == null}" shiro:hasPermission="magazineorder:review" th:onclick="'javascript:review('+${record.id}+',1);'"
+								class="am-btn am-btn-primary tpl-btn-bg-color-success ">確認</button>
+							<button type="button" th:if="${record.examineName =='' || record.examineName == null}" shiro:hasPermission="magazineorder:review" th:onclick="'javascript:review('+${record.id}+',3);'"
+								class="am-btn am-btn-warning tpl-btn-bg-color-warning">拒絕</button>
+							<button type="button" onclick="loadPage('magazineorder/listUI')"
+								class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+		validateNewsCategoryForm();
+		function validateNewsCategoryForm(){
+		    $('#newsInfoForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		            title : {
+		                required : true
+		            }
+		        },
+		        messages : {
+		        	title : {
+		                required : "標題不能為空"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	CKEDITOR.instances.content.updateElement(); 
+		        	commit('newsInfoForm', 'newsinfo/save', 'newsinfo/listUI');
+		        }
+		    });
+	    }
+		
+		function review(id,status){
+			var content = '';
+			if(status == 1){
+				content = '确认通過該雜誌訂閱申請表吗？';
+			}else{
+				content = '确认拒絕該雜誌訂閱申請表吗？';
+			}
+			layer.confirm(content, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "magazineorder/"+id+"/"+status+"/review",
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('magazineorder/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		]]>
+	</script>

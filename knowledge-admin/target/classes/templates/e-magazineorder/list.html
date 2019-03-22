@@ -1,0 +1,241 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	width: 15%;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">電子雜誌訂閱管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								用戶名：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="用戶名" id="nickname" th:value="${nickname}" />
+								</div>
+							</div>
+						</div>
+						
+						<input type="hidden" id="sort" name="sort" th:value="${sort}"/>
+						<input type="hidden" id="isAsc" name="isAsc" th:value="${isAsc}"/>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								訂閱郵箱：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="Email" id="email" th:value="${email}"/>
+								</div>
+							</div>
+						</div>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								聯絡電話：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="Phone" id="phone" th:value="${phone}"/>
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3">
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-7">
+							<label class="label-weight am-left fabu">訂閱时间： </label>
+							<div classs="tpl-form-border-form">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="e-magazineOrder:excel" type="button" class="am-btn am-btn-warning"
+											onclick="javascript:window.location.href='e-magazineorder/export';">
+											<span class="am-icon-download"></span> 導出
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>註冊郵箱</th>
+									<th>用戶名</th>
+									<th>訂閱郵箱</th>
+									<th>聯絡電話</th>
+									<th>註冊時間</th>
+									<th>訂閱時間<div id="click-sort"><div id="sort-asc" onclick="sortAsc('sub_time');" th:style="${(sort eq 'sub_time' && isAsc eq 'true') ? 'color:#666565' : ''}"><i class="am-icon-sort-asc"></i></div><div  id="sort-desc" onclick="sortDesc('sub_time');" th:style="${(sort eq 'sub_time' && isAsc eq 'false') ? 'color:#666565' : ''}"><i class="am-icon-sort-desc"></i></div></div></th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${record.email}"></td>
+									<td th:text="${record.nickname}"></td>
+									<td th:text="${record.subEmail}"></td>
+									<td th:text="${record.phone}"></td>
+									<td th:text="${#dates.format(record.registerTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${#dates.format(record.subTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'e-magazineorder/'+${record.id}+'/select\');'" shiro:hasPermission="e-magazineOrder:view"> <i class="am-icon-eye"></i> 查看</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+	 	
+	 	function params(sort,isAsc) {
+		 	var nickname = $('#nickname').val();
+			var email = $('#email').val();
+			var phone = $('#phone').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			
+			if($("#sort").val()!=null && sort==null){
+				sort=$("#sort").val();
+			}
+			
+			if($("#isAsc").val()!=null && isAsc==null){
+				isAsc=$("#isAsc").val();
+			}
+			
+			var jsonParam = {
+				"nickname":nickname,
+				"email":email,
+				"phone":phone,
+				"from":from,
+				"to":to,
+				"sort":sort,
+				"isAsc":isAsc
+			}
+			return jsonParam;
+		}
+	    initPage([[${page.pages}]],[[${page.current}]],'e-magazineorder/listUI',params());		
+	    
+		function search(){
+			
+			loadPageToJson('e-magazineorder/listUI',params());
+		}
+		
+		function allEmpty() {
+			$("#empty").val('');
+			$(".empty").removeAttr('value');
+			
+			$("#sort").val('id');
+			$("#isAsc").val('false');
+		}
+		
+
+		function sortAsc(clum) {
+			$("#sort-desc").css("color","#c0bfbf");
+			$("#sort-asc").css("color","#666565");
+			loadPageToJson('e-magazineorder/listUI',params(clum,true));
+			console.log(params(clum,true))
+		}
+		
+		function sortDesc(clum) {
+			$("#sort-desc").css("color","#666565");
+			$("#sort-asc").css("color","#c0bfbf");
+			loadPageToJson('e-magazineorder/listUI',params(clum,false));
+			console.log(params(clum,false))
+		}
+		
+		
+		]]>
+	</script>
+

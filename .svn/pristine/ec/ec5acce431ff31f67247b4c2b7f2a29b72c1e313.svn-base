@@ -1,0 +1,83 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">新增角色</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="roleForm" method="post">
+						<div class="am-form-group">
+							<label for="account" class="am-u-sm-2 am-form-label">角色名稱</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="account" class="tpl-form-input" placeholder="請輸入角色名稱" name="name" /> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="password" class="am-u-sm-2 am-form-label">角色標識</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="password" class="tpl-form-input" placeholder="請輸入角色標識" name="key" /> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="repassword" class="am-u-sm-2 am-form-label">描述</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="repassword" class="tpl-form-input" placeholder="請輸入描述" name="description" /> 
+							</div>
+						</div>
+						
+
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#roleForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('role/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+	//$('select').selected();
+	validateUserForm();
+	function validateUserForm(){    
+	    $('#roleForm').validate({
+	        errorElement : 'span',
+	        errorClass : 'am-icon-times',
+	        focusInvalid : true,
+	        onkeyup:false,
+	        ignore : "",
+	        rules : {
+	            name : {
+	                required : true
+	            },
+	            key : {
+	                required : true
+	            }
+	        },
+	        messages : {
+	        	name : {
+	                required : "請填寫角色名稱"
+	            },
+	            key : {
+	                required : "請填寫角色標識"
+	            }
+	        },
+	        submitHandler : function(form) {
+	        	commit('roleForm', 'role/save', 'role/listUI');
+	        }
+	    });
+	}
+		]]>
+	</script>

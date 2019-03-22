@@ -1,0 +1,223 @@
+<style>
+.tpl-table-list-select {
+    text-align: left;
+    width: 470px;
+}
+
+#status{
+	width:20%;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+}
+
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">資訊類別管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								類別名稱：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="類別名稱" id="name" th:value="${name}" />
+								</div>
+							</div>
+						</div>
+					
+						<div class="am-u-sm-12 am-u-lg-8" style="float:left">
+							<div class="am-form-group tpl-table-list-select">
+								<label>創建时间：</label>
+							    <input type="text"  id="from" class="empty" name="from" placeholder="yyyy-mm-dd"  readonly="readonly" th:value="${from}"/>
+							    <span>至</span>
+							    <input type="text"  id="to" class="empty" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}"/>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								狀態：
+							</div>
+							<div class="tpl-table-list-select">
+								<div class="am-u-sm-5">
+									<select id="status" data-am-selected="{btnWidth: '150px'}"> 
+										<option value="0">請選擇狀態</option>
+										<option value="1" th:selected="${status==1}">上架</option>
+										<option value="2" th:selected="${status==1}">下架</option>
+									</select>
+								</div>
+								<div style="float:right;">
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="category:add" type="button"
+											class="am-btn am-btn-default am-btn-success"
+											onclick="loadPage('newscategory/form')">
+											<span class="am-icon-plus"></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>權重</th>
+									<th>類別名稱</th>
+									<th>創建時間</th>
+									<th>創建人</th>
+									<th>更新時間</th>
+									<th>更新人</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record:${page.records}">
+									<td th:text="${record.weight}"></td>
+									<td th:text="${record.name}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${record.createUser}"></td>
+									<td th:text="${#dates.format(record.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${record.updateUser}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.status eq 1}" class='am-badge am-badge-success'>上架</span>
+										<span th:if="${record.status eq 2}" class='am-badge am-badge-warning'>已下架</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'newscategory/'+${record.id}+'/select\');'" shiro:hasPermission="category:edit"> <i class="am-icon-pencil"></i> 編輯</a> 
+											<a href="javascript:;" th:if="${record.status==2}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="category:shelf"><i class="am-icon-level-up"></i>上架</a>
+											<a href="javascript:;" th:if="${record.status==1}" th:onclick="'javascript:changeStatus('+${record.id}+',2);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="category:shelf"><i class="am-icon-level-down"></i>下架</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+		var params =['name','from','to','status'];
+	    initPage([[${page.pages}]],[[${page.current}]],'newscategory/listUI',params);		
+	    
+		function search(){
+			var name = $('#name').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			var status = $('#status').val();
+			loadPage('newscategory/listUI?name='+name+'&from='+from+'&to='+to+'&status='+status);
+		}
+		
+		function changeStatus(id,status){
+			var context;
+			if (status == 1) {
+				context = '确认上架该資訊類別吗？'
+			}else{
+				context = '确认下架该資訊類別吗？'
+			}
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "newscategory/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('newscategory/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#name").val();
+			$(".empty").removeAttr('value');
+			$("#status").val(0).trigger('changed.selected.amui');
+		}
+		]]>
+	</script>
+

@@ -1,0 +1,39 @@
+package com.knowledge.admin.base.config.mybatis;
+
+import java.util.Date;
+
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.shiro.SecurityUtils;
+
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
+import com.knowledge.admin.base.user.entity.TbUser;
+
+/**
+ * 自定义公共字段自动填充
+ * 
+ * @author francis
+ *
+ */
+public class MyMetaObjectHandler extends MetaObjectHandler {
+
+	@Override
+	public void insertFill(MetaObject metaObject) {
+		System.out.println("*************************");
+		System.out.println("insert fill");
+		System.out.println("*************************");
+		TbUser user = (TbUser)SecurityUtils.getSubject().getPrincipal();
+		setFieldValByName("createUser", user.getAccountName(), metaObject);
+		setFieldValByName("createTime", new Date(), metaObject);
+	}
+
+	@Override
+	public void updateFill(MetaObject metaObject) {
+		System.out.println("*************************");
+        System.out.println("update fill");
+        System.out.println("*************************");
+        TbUser user = (TbUser)SecurityUtils.getSubject().getPrincipal();
+        setFieldValByName("updateUser", user.getAccountName(), metaObject);
+		setFieldValByName("updateTime", new Date(), metaObject);
+	}
+
+}

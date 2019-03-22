@@ -1,0 +1,45 @@
+package com.knowledge.api.business.magazine;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.knowledge.api.base.config.jwt.annotation.UserLoginToken;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.business.periodical.entity.TbMagazineOrder;
+import com.knowledge.common.business.periodical.service.ITbMagazineOrderService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * <p>
+ * 杂志订单  前端控制器
+ * </p>
+ *
+ * @author jide
+ * @since 2018-12-04
+ */
+@RestController
+@Api(value="订阅杂志",tags={"订阅杂志"})
+public class TbMagazineOrderController extends BaseController {
+
+	@Autowired
+	private ITbMagazineOrderService magazineService;
+	
+
+
+	@UserLoginToken
+	@PostMapping("/magazineorder/save")
+	@ApiOperation(value = "订阅杂志保存",notes="订阅杂志保存")
+	public Result add(@RequestBody TbMagazineOrder tbmagazineorder){
+		magazineService.insert(tbmagazineorder);
+		return success();
+	}
+	
+	
+	
+
+}

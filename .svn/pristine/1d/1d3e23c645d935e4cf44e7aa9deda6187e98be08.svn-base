@@ -1,0 +1,42 @@
+package com.knowledge.api.base.service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Service;
+
+
+
+ 
+@Service
+public class CaptchaService {
+    @Value("6000")
+    private Integer timeout;
+    
+    @Autowired
+    protected StringRedisTemplate redisTemplate;
+ 
+    public Map<String,Object> createToken(String captcha){
+        //生成一个token
+        String cToken = UUID.randomUUID().toString();
+ 
+        //生成验证码对应的token  以token为key  验证码为value存在redis中
+        
+        //StringRedisTemplate template = RedisUtil.getStringRedisTemplate();
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String key = String.format("CLIENT_TOKEN", cToken);
+        valueOperations.set(key, captcha);
+        redisTemplate.expire(key, timeout, TimeUnit.MINUTES);
+ 
+        Map<String, Object> map = new HashMap<>();
+        map.put("cToken", cToken);
+        map.put("expire", timeout);
+        return map;
+    }
+}

@@ -1,0 +1,363 @@
+package com.knowledge.common.business.member.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.FieldFill;
+import com.baomidou.mybatisplus.enums.IdType;
+
+/**
+ * <p>
+ * 用户信息管理
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-30
+ */
+@TableName("tb_member")
+public class TbMember extends Model<TbMember> {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 主键
+	 */
+	@TableId(value = "id", type = IdType.AUTO)
+	private Integer id;
+
+	/**
+	 * 密码
+	 */
+	private String password;
+
+	/**
+	 * 头像Url
+	 */
+	@TableField("head_portrait_url")
+	private String headPortraitUrl;
+	/**
+	 * 昵称
+	 */
+	private String nickname;
+
+	/**
+	 * 性别（0=男 1=女 2=保密）
+	 */
+	private Integer sex;
+	/**
+	 * 所属学校
+	 */
+	private String school;
+	/**
+	 * 年班
+	 */
+	private String grade;
+	/**
+	 * Email
+	 */
+	private String email;
+	/**
+	 * 联系电话
+	 */
+	private String phone;
+	/**
+	 * whatsapp
+	 */
+	private String whatsapp;
+	/**
+	 * wechat
+	 */
+	private String wechat;
+	/**
+	 * 注册时间
+	 */
+	@TableField("register_time")
+	private Date registerTime;
+	/**
+	 * facebook id
+	 */
+	@TableField("facebook_id")
+	private String facebookId;
+	@TableField("facebook_name")
+	private String facebookName;
+	@TableField("google_id")
+	private String googleId;
+	@TableField("google_name")
+	private String googleName;
+
+	@TableField("active_state")
+	private Integer activeState;
+
+	
+
+	@TableField("sub_email")
+	private String subEmail;
+
+	@TableField("sub_time")
+	private Date subTime;
+
+	@TableField(value = "update_time", fill = FieldFill.UPDATE)
+	private Date updateTime;
+
+	@TableField("active_code")
+	private String activeCode;
+
+	@TableField("active_time")
+	private Date activeTime;
+	
+	@TableField(exist = false)
+	private String token;
+	
+	@TableField(exist = false)
+	private String hostName;
+	
+	@TableField(exist = false)
+	private String code;
+	
+	
+	@TableField(exist = false)
+	private Integer type;
+	
+	@TableField(exist = false)
+	private String oldPassword;
+	
+	
+
+	public String getOldPassword() {
+		return oldPassword;
+	}
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public String getActiveCode() {
+		return activeCode;
+	}
+
+	public void setActiveCode(String activeCode) {
+		this.activeCode = activeCode;
+	}
+
+	public Date getActiveTime() {
+		return activeTime;
+	}
+
+	public void setActiveTime(Date activeTime) {
+		this.activeTime = activeTime;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Integer getActiveState() {
+		return activeState;
+	}
+
+	public void setActiveState(Integer activeState) {
+		this.activeState = activeState;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+
+	public String getHeadPortraitUrl() {
+		return headPortraitUrl;
+	}
+
+	public void setHeadPortraitUrl(String headPortraitUrl) {
+		this.headPortraitUrl = headPortraitUrl;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+
+	public String getSchool() {
+		return school;
+	}
+
+	public void setSchool(String school) {
+		this.school = school;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getWhatsapp() {
+		return whatsapp;
+	}
+
+	public void setWhatsapp(String whatsapp) {
+		this.whatsapp = whatsapp;
+	}
+
+	public String getWechat() {
+		return wechat;
+	}
+
+	public void setWechat(String wechat) {
+		this.wechat = wechat;
+	}
+
+	public Date getRegisterTime() {
+		return registerTime;
+	}
+
+	public void setRegisterTime(Date registerTime) {
+		this.registerTime = registerTime;
+	}
+
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
+	}
+
+	public String getFacebookName() {
+		return facebookName;
+	}
+
+	public void setFacebookName(String facebookName) {
+		this.facebookName = facebookName;
+	}
+
+	public String getGoogleId() {
+		return googleId;
+	}
+
+	public void setGoogleId(String googleId) {
+		this.googleId = googleId;
+	}
+
+	public String getGoogleName() {
+		return googleName;
+	}
+
+	public void setGoogleName(String googleName) {
+		this.googleName = googleName;
+	}
+
+	public String getSubEmail() {
+		return subEmail;
+	}
+
+	public void setSubEmail(String subEmail) {
+		this.subEmail = subEmail;
+	}
+
+	
+
+	public Date getSubTime() {
+		return subTime;
+	}
+
+	public void setSubTime(Date subTime) {
+		this.subTime = subTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
+
+	@Override
+	public String toString() {
+		return "TbMember{" + ", id=" + id + ", password=" + password + ", headPortraitUrl=" + headPortraitUrl
+				+ ", nickname=" + nickname + ", sex=" + sex + ", school=" + school + ", grade=" + grade
+				+ ", email=" + email + ", phone=" + phone + ", whatsapp=" + whatsapp + ", wechat=" + wechat
+				+ ", registerTime=" + registerTime + ", facebookId=" + facebookId + ", facebookName=" + facebookName
+				+ ", googleId=" + googleId + ", googleName=" + googleName + ", subEmail=" + subEmail + ", subTime="
+				+ subTime + ", updateTime=" + updateTime + "}";
+	}
+}

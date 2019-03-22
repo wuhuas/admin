@@ -1,0 +1,165 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">編輯廣告</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="adForm" method="post">
+						<input type="hidden" th:value="${record.id}" name="id">
+						<div class="am-form-group">
+							<label  class="am-u-sm-2 am-form-label">類別</label>
+							<div class="am-u-sm-10">
+									<select id="typeId" name="typeId" data-am-selected="{searchBox: 1}" >
+										<option value="0">請選擇</option>
+										<option th:each="ad : ${adTypes}" th:value="${ad.id}" th:text="${ad.name}" th:selected="${ad.id eq record.typeId}"></option>
+									</select>
+							</div>
+						</div>
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">廣告標題</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="title" class="tpl-form-input" th:value="${record.title}" placeholder="请输入廣告標題" name="title"/> 
+							</div>
+						</div>
+						
+												
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">權重</label>
+							<div class="am-u-sm-10">
+								<input type="number" min="0" id="weight" class="tpl-form-input" th:value="${record.weight}" placeholder="请输入廣告標題" name="weight"/> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label  class="am-u-sm-2 am-form-label">鏈接類型</label>
+							<div class="am-u-sm-10">
+									<select id="urlType" name="urlType" data-am-selected onchange="urlTypeShow()">
+										<option value="0">請選擇</option>
+										<option value="1" th:selected="${record.urlType == 1}">內鏈</option>
+										<option value="2" th:selected="${record.urlType == 2}">外鏈</option>
+									</select>
+							</div>
+						</div>
+						
+						
+												
+						<div class="am-form-group" id="modularTypeDiv">
+							<label  class="am-u-sm-2 am-form-label">內鏈頁面模塊類型</label>
+							<div class="am-u-sm-10">
+									<select id="modularType" name="modularType" >
+										<option th:selected="${record.modularType} eq '1'" value="1">資訊</option>
+										<option th:selected="${record.modularType} eq '2'" value="2">精選期刊</option>
+										<option th:selected="${record.modularType} eq '3'" value="3">活動中心</option>
+										<option th:selected="${record.modularType} eq '4'" value="4">創作天地</option>
+									</select>
+							</div>
+						</div>
+						
+						
+																
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">跳轉URL</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="jumpUrl" class="tpl-form-input" th:value="${record.jumpUrl}" placeholder="请输入跳轉 URL" name="jumpUrl"/> 
+							</div>
+						</div>
+						
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">選擇圖片</label>
+							<div class="am-u-sm-10">
+								<input id="uploadImg" type="file" name="file" />
+								<input id="pictureUrl" type="hidden"  name="pictureUrl" th:value="${record.pictureUrl}"/>
+							</div>
+						</div>
+						
+						
+						
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#adForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('ad/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+		validateUserForm();
+		urlTypeShow();
+		
+		function validateUserForm(){
+		    $('#adForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		        	title : {
+		                required : true
+		            },
+		    		urlType : {
+		    			min:1
+		    		}
+		        },
+		        messages : {
+		        	title : {
+		                required : "廣告標題不能為空"
+		            },
+		            urlType : {
+		            	min:"請選擇鏈接類型"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	commit('adForm', 'ad/save', 'ad/listUI');
+		        }
+		    });
+	    }
+		
+		var imgHtml = '';
+		if([[${record.pictureUrl}]] != null){
+			imgHtml = '<img src='+[[${record.pictureUrl}]]+' alt="" style="max-width:200px;">'
+		}
+		initUpImgFileOne('uploadImg','pictureUrl','添加封面圖',imgHtml);
+		
+		
+
+		function urlTypeShow(){
+			if($("#urlType").val()==1){
+				$("#modularTypeDiv").show();
+			}else{
+				$("#modularTypeDiv").hide();
+			}
+		}
+		/* var imgHtml = '';
+		if([[${record.pictureUrl}]] != null){
+			imgHtml = '<img src='+[[${record.pictureUrl}]]+' alt="" style="max-width:500px">'
+		}
+		initUpOtherFileOne('uploadFile','pictureUrl','添加附件',imgHtml); */ 
+		]]>
+	
+	
+	
+
+		
+		
+	</script>
+	
+	

@@ -1,0 +1,16 @@
+package com.knowledge.common.business.periodical.mapper;
+
+import com.knowledge.common.business.periodical.entity.TbSelectedPeriodical;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+
+/**
+ * <p>
+  * 精选期刊 Mapper 接口
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-28
+ */
+public interface TbSelectedPeriodicalDao extends BaseMapper<TbSelectedPeriodical> {
+
+}

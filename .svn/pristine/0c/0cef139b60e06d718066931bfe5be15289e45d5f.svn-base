@@ -1,0 +1,25 @@
+#换行为两个空格
+  
+#数据库配置
+spring:
+  datasource:
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://119.23.201.55:3307/knowledge?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true
+    username: root
+    password: Loogk12346
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:  
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  thymeleaf: 
+    mode: HTML5
+    cache: false
+    encoding: UTF-8
+  velocity: 
+    enabled: false  

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.ad.mapper.TbAdDao">
+
+	<!-- 开启二级缓存
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> -->
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.ad.entity.TbAd">
+		<id column="id" property="id" />
+		<result column="type_id" property="typeId" />
+		<result column="title" property="title" />
+		<result column="weight" property="weight" />
+		<result column="picture_url" property="pictureUrl" />
+		<result column="jump_url" property="jumpUrl" />
+		<result column="modular_type" property="modularType" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, type_id AS typeId, title, weight, picture_url AS pictureUrl, jump_url AS jumpUrl, modular_type AS modularType
+    </sql>
+
+</mapper>

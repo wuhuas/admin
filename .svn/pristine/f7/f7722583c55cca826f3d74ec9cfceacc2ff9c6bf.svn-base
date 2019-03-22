@@ -1,0 +1,118 @@
+package com.knowledge.api.business.home;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.feilong.core.DatePattern;
+import com.feilong.core.date.DateUtil;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.business.ad.entity.TbAd;
+import com.knowledge.common.business.ad.service.ITbAdService;
+import com.knowledge.common.business.creation.entity.TbCreationManage;
+import com.knowledge.common.business.creation.service.ITbCreationManageService;
+import com.knowledge.common.business.news.entity.TbNewsCategory;
+import com.knowledge.common.business.news.entity.TbNewsInfo;
+import com.knowledge.common.business.news.service.ITbNewsCategoryService;
+import com.knowledge.common.business.news.service.ITbNewsInfoService;
+import com.knowledge.common.business.periodical.entity.TbSelectedPeriodical;
+import com.knowledge.common.business.periodical.service.ITbSelectedPeriodicalService;
+import com.knowledge.common.business.periodicaltips.entity.TbPeriodicalTips;
+import com.knowledge.common.business.periodicaltips.service.ITbPeriodicalTipsService;
+import com.knowledge.common.business.school.entity.TbSchoolCalendarRecommend;
+import com.knowledge.common.business.school.service.ITbSchoolCalendarRecommendService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@RestController
+@RequestMapping("/home/")
+@Api(tags = { "首页" })
+public class HomeController extends BaseController {
+
+	@Autowired
+	private ITbAdService adService;
+
+	@Autowired
+	private ITbNewsInfoService newsService;
+
+	@Autowired
+	private ITbNewsCategoryService newsCategoryService;
+
+	@Autowired
+	private ITbSelectedPeriodicalService periodicalService;
+
+	@Autowired
+	private ITbPeriodicalTipsService periodicalTipsService;
+
+	@Autowired
+	private ITbSchoolCalendarRecommendService schoolCalendarRecommendService;
+
+	@Autowired
+	private ITbCreationManageService creationService;
+
+	@SuppressWarnings("unchecked")
+	@GetMapping("getHome")
+	@ApiOperation("首頁")
+	public Result getHome() {
+		Map<String, Object> map = new HashMap<>();
+		List<TbAd> topAds = adService.selectList(
+				Condition.create().eq("type_id", 1).orderBy("weight", false).orderBy("id", false).last("limit 4"));
+		map.put("topAds", topAds);
+
+		List<TbNewsInfo> hotNews = newsService.selectByTop(Condition.create().eq("i.status", 1)
+				.orderBy("i.weight", false).orderBy("i.create_time", false).last("limit 3"));
+		map.put("hotNews", hotNews);
+
+		List<TbNewsCategory> categorys = newsCategoryService.selectList(Condition.create().eq("status", 1)
+				.orderBy("weight", false).orderBy("create_time", false).last("limit 6"));
+		for (int i = 0; i < categorys.size(); i++) {
+			TbNewsCategory tbNewsCategory = categorys.get(i);
+			List<TbNewsInfo> list = newsService.selectList(Condition.create().eq("category_id", tbNewsCategory.getId())
+					.eq("status", 1).orderBy("weight", false).orderBy("create_time", false).last("limit 3"));
+			tbNewsCategory.setNewsInfos(list);
+		}
+		map.put("columns", categorys);
+		List<TbAd> midAds = adService.selectList(
+				Condition.create().eq("type_id", 2).orderBy("weight", false).orderBy("id", false).last("limit 1"));
+		map.put("midAds", midAds);
+
+		List<TbSelectedPeriodical> selectedPeriodicals = periodicalService
+				.selectList(Condition.create().orderBy("periods_number", false).orderBy("id", false).last("limit 3"));
+		map.put("selectedPeriodicals", selectedPeriodicals);
+
+		List<TbAd> downAds = adService.selectList(
+				Condition.create().eq("type_id", 3).orderBy("weight", false).orderBy("id", false).last("limit 1"));
+		map.put("downAds", downAds);
+		List<TbPeriodicalTips> periodicalTips = periodicalTipsService.selectList(Condition.create().eq("status", 1)
+				.eq("is_home", 1).orderBy("weight", false).orderBy("id", false).last("limit 3"));
+		map.put("periodicalTips", periodicalTips);
+		List<TbAd> rightUpAds = adService.selectList(
+				Condition.create().eq("type_id", 4).orderBy("weight", false).orderBy("id", false).last("limit 1"));
+		map.put("rightUpAds", rightUpAds);
+		List<TbAd> rightDownAds = adService.selectList(
+				Condition.create().eq("type_id", 5).orderBy("weight", false).orderBy("id", false).last("limit 3"));
+		map.put("rightDownAds", rightDownAds);
+
+		List<TbSchoolCalendarRecommend> schoolCalendarRecommends = schoolCalendarRecommendService.selectList(Condition
+				.create().eq("status", 1).ge("activity_date", DateUtil.toString(new Date(), DatePattern.COMMON_DATE))
+				.orderBy("activity_date", true).last("limit 6"));
+		map.put("schoolCalendarRecommends", schoolCalendarRecommends);
+		List<TbCreationManage> leftCreationManages = creationService
+				.selectList(Condition.create().eq("status", 1).eq("is_home", 1).orderBy("id", false).last("limit 4"));
+		map.put("leftCreationManages", leftCreationManages);
+
+		List<TbCreationManage> rightCreationManages = creationService
+				.selectList(Condition.create().eq("status", 1).orderBy("create_time", false).last("limit 8"));
+		map.put("rightCreationManages", rightCreationManages);
+		return json(map);
+	}
+}

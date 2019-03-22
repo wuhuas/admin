@@ -1,0 +1,429 @@
+$(function() {
+	 $('.sidebar-nav').dropdown();
+    // 读取body data-type 判断是哪个页面然后执行相应页面方法，方法在下面。
+    var dataType = $('body').attr('data-type');
+    autoLeftNav();
+    console.log(dataType);
+    for (key in pageData) {
+        if (key == dataType) {
+            pageData[key]();
+        }
+    }
+    $(window).resize(function() {
+        autoLeftNav();
+        console.log($(window).width());
+    });
+})
+
+
+
+
+// 页面数据
+var pageData = {
+    // ===============================================
+    // 首页
+    // ===============================================
+  
+}
+// 风格切换
+
+$('.tpl-skiner-toggle').on('click', function() {
+    $('.tpl-skiner').toggleClass('active');
+})
+
+$('.tpl-skiner-content-bar').find('span').on('click', function() {
+	var color = $(this).attr('data-color');
+    $('body').attr('class',color )
+    saveSelectColor.Color = color;
+    // 保存选择项
+    storageSave(saveSelectColor);
+
+})
+
+
+
+
+// 侧边菜单开关
+function autoLeftNav() {
+    $('.tpl-header-switch-button').on('click', function() {
+        if ($('.left-sidebar').is('.active')) {
+            if ($(window).width() > 1024) {
+                $('.tpl-content-wrapper').removeClass('active');
+            }
+            $('.left-sidebar').removeClass('active');
+        } else {
+
+            $('.left-sidebar').addClass('active');
+            if ($(window).width() > 1024) {
+                $('.tpl-content-wrapper').addClass('active');
+            }
+        }
+    })
+
+    if ($(window).width() < 1024) {
+        $('.left-sidebar').addClass('active');
+    } else {
+        $('.left-sidebar').removeClass('active');
+    }
+}
+
+
+// 侧边菜单
+$('.sidebar-nav-sub-title').on('click', function() {
+    $(this).siblings('.sidebar-nav-sub').slideToggle(80)
+        .end()
+        .find('.sidebar-nav-sub-ico').toggleClass('sidebar-nav-sub-ico-rotate');
+})
+
+
+function loadPage(url){
+	$(".tpl-content-wrapper").load(url,function(response,status,xhr){
+		if(xhr.getResponseHeader('sessionstatus') == 'timeout'){
+			 window.location = "/";  
+		}
+	});
+}
+/**
+ * 菜单加载
+ * @param url
+ * @param obj
+ */
+function menuLoad(url,obj){
+	$("a[class='active']").removeClass('active');
+	$(obj).addClass("active");
+	$(obj).parent().parent().parent().find('a:first').addClass("active");
+	if(url.indexOf("druid")!=-1){
+		 window.open(url);
+	}else{
+		loadPage(url);
+	}
+}
+/**
+ * 表单提交通用
+ * @param formId
+ * @param commitUrl
+ * @param jumpUrl
+ */
+function commit(formId, commitUrl, jumpUrl) {
+    //组装表单数据
+    var index;
+    var data = $("#" + formId).serialize();
+    $.ajax({
+        type : "POST",
+        url : commitUrl,
+        data : data,
+        beforeSend : function() {
+            index = layer.load();
+        },
+        success : function(resultdata) {
+        	console.log(resultdata);
+            layer.close(index);
+            if (resultdata.code=="0") {
+                layer.msg(resultdata.msg, {
+                    icon : 1
+                });
+                loadPage(jumpUrl);
+            } else {
+                layer.msg(resultdata.msg, {
+                    icon : 5
+                });
+            }
+        },
+        error : function(data, errorMsg) {
+            layer.close(index);
+            layer.msg(data.responseText, {
+                icon : 2
+            });
+        }
+    });
+}
+
+
+/**
+ * 删除通用
+ * @param nav
+ * @param jumpUrl
+ */
+function del(nav,jumpUrl){
+	layer.confirm('確認刪除嗎？', {
+        icon : 3,
+        title : '刪除提示'
+    }, function(index, layero) {
+        $.ajax({
+            type : "DELETE",
+            url :  nav,
+            dataType : "json",
+            success : function(resultdata) {
+                if (resultdata.code=="0") {
+                    layer.msg(resultdata.msg, {
+                        icon : 1
+                    });
+                    loadPage(jumpUrl);
+                } else {
+                    layer.msg(resultdata.msg, {
+                        icon : 0
+                    });
+                }
+            },
+            error : function(errorMsg) {
+                layer.msg('服務器未響應，請稍後重試！', {
+                    icon : 3
+                });
+            }
+        });
+        layer.close(index);
+    });
+}
+/**
+ * 编辑通用
+ * @param nav
+ */
+function edit(nav){
+	  $.ajax({
+          type : "PUT",
+          url :  nav,
+          dataType : "json",
+          error : function(errorMsg) {
+              layer.msg('服務器未響應，請稍後重試！', {
+                  icon : 3
+              });
+          }
+      });
+}
+/**
+ * 获取单选选中
+ * @returns
+ */
+function getCheck(){
+	var checkId = $('input[name="checkId"]:checked').val();
+	if(checkId == null){
+		 layer.msg("你沒有選擇行", {
+             icon : 0
+         });
+		 return '';
+	}else{
+		return checkId;
+	}
+}
+/**
+ * 获取多选选中
+ * @returns
+ */
+function getCheckAll(){
+	 var checkIds = "";
+     $('input:checkbox[name=checkId]:checked').each(function(i){
+	      if(0==i){
+	    	  checkIds = $(this).val();
+	      }else{
+	    	  checkIds += (","+$(this).val());
+	      }
+     });
+     return checkIds;
+}
+/**
+ * 复习框 全选/全部选
+ */
+function initCheckAll(){
+	$('#checkAll').click(function(){ 
+	    $('input[name="checkId"]').prop("checked",this.checked); 
+	});
+}
+/**
+ * 分页初始化
+ * @param pages
+ * @param current
+ * @param jumpUrl
+ * @param params
+ */
+function initPage(pages,current,jumpUrl,params){
+	var pagination = new Pagination({
+		  wrap: $('.am-pagination'), // 存放分页内容的容器
+		  count: pages, // 总页数
+		  current: current, // 当前的页数（默认为1）
+		  prevText: '上一頁', // prev 按钮的文本内容
+		  nextText: '下一頁', // next 按钮的文本内容
+		  callback: function(page) { // 每一个页数按钮的回调事件
+				var par='';
+				if(params!=null && params.length>0){
+					for(x in params){
+						var str = $('#'+params[x]).val();
+						console.log(str);
+						if(str!=-1 && str !='' && typeof(str) != 'undefined'){
+							par +='&'+params[x]+'='+str;
+						}
+					}
+				}
+			  loadPage(jumpUrl+"?page="+page+par);
+		  }
+		});
+}
+
+/**
+ * 分页初始化 参数为json版
+ * @param pages
+ * @param current
+ * @param jumpUrl
+ * @param params
+ * @returns
+ */
+function initPageToJson(pages,current,jumpUrl,params){
+	var pagination = new Pagination({
+		  wrap: $('.am-pagination'), // 存放分页内容的容器
+		  count: pages, // 总页数
+		  current: current, // 当前的页数（默认为1）
+		  prevText: '上一頁', // prev 按钮的文本内容
+		  nextText: '下一頁', // next 按钮的文本内容
+		  callback: function(page) { // 每一个页数按钮的回调事件
+			  loadPageToJson(jumpUrl+"?page="+page,params);
+		  }
+		});
+}
+/*function initPageToJson(pages,current,jumpUrl,params){
+	var pagination = new Pagination({
+		  wrap: $('.am-pagination'), // 存放分页内容的容器
+		  count: pages, // 总页数
+		  current: current, // 当前的页数（默认为1）
+		  prevText: '上一页', // prev 按钮的文本内容
+		  nextText: '下一页', // next 按钮的文本内容
+		  callback: function(page) { // 每一个页数按钮的回调事件
+			  var jsonParam = {};
+			  //var param = "";
+			  debugger;
+			  if(params!=null && params.length>0){
+					for(x in params){
+						var str = $('#'+params[x]).val();
+						console.log(str);
+						if(str != '' && typeof(str) != 'undefined'){
+							//param +='&'+params[x]+'='+str;
+							//jsonParam.push("{"+params[x]+":"+str+"}");
+							eval("jsonParam."+params[x]+"="+str);
+						}
+					}
+				}
+			  loadPageToJson(jumpUrl+"?page="+page,jsonParam);
+		  }
+		});
+}*/
+
+/**
+ * 加载页面 json 传参
+ * @param url
+ * @returns
+ */
+function loadPageToJson(url,jsonParam){
+	$(".tpl-content-wrapper").load(url,jsonParam,function(response,status,xhr){
+		if(xhr.getResponseHeader('sessionstatus') == 'timeout'){
+			 window.location = "/";  
+		}
+	});
+}
+
+function initUpImgFileOne(id,showId,label,initImg){
+	$('#'+id+'').fileinput({
+		 showUpload : true,
+	     showRemove : false,
+	     showCaption: false,
+		 showPreview : true, //是否显示预览'
+		 maxFileSize:50000,
+	     language : 'zh',
+		 uploadUrl: 'upload/uploadImg',
+		 allowedPreviewTypes : [ 'image' ],
+	     /* allowedFileExtensions : [ 'jpg', 'png', 'gif','jepg' ],*/
+	     browseClass: "am-btn am-btn-danger am-btn-sm", //按钮样式
+	     dropZoneEnabled: false,//是否显示拖拽区域
+		 uploadAsync:false,
+		 uploadClass:'btn btn-default uploadBtnColor',
+		 browseIcon:'<i class="am-icon-cloud-upload"></i>',
+		 browseLabel:label,
+		 removeIcon: '<i class="am-icon-trash"></i>',
+		 layoutTemplates:{'footer':''},
+		 initialPreview:initImg,
+	}).on("filebatchuploadsuccess", function(event, data) {
+	    if(data.response.code==0){
+	    	$('#'+showId+'').val(data.response.data);
+	    	layer.msg('上傳成功', {
+	    		  icon: 1,
+	    		  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    } else{
+	    	layer.msg('服務器未響應，請稍後重試~', {
+	    		  icon: 3,
+	    		  time: 3000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    }
+	}); 
+}
+
+function initUpOtherFileOne(id,showId,label,initImg){
+	$('#'+id+'').fileinput({
+		 showUpload : true,
+	     showRemove : false,
+	     showCaption: false,
+		 showPreview : true, //是否显示预览'
+		 maxFileSize:1024*5000,
+	     language : 'zh',
+		 uploadUrl: 'upload/uploadFile',
+		/* allowedPreviewTypes : [ 'image' ],
+	     allowedFileExtensions : [ 'jpg', 'png', 'gif' ],*/
+	     browseClass: "am-btn am-btn-danger am-btn-sm", //按钮样式
+	     dropZoneEnabled: false,//是否显示拖拽区域
+		 uploadAsync:false,
+		 uploadClass:'btn btn-default uploadBtnColor',
+		 browseIcon:'<i class="am-icon-cloud-upload"></i>',
+		 browseLabel:label,
+		 removeIcon: '<i class="am-icon-trash"></i>',
+		 layoutTemplates:{'footer':''},
+		 initialPreview:initImg,
+	}).on("filebatchuploadsuccess", function(event, data) {
+	    if(data.response.code==0){
+	    	$('#'+showId+'').val(data.response.data);
+	    	layer.msg('上傳成功', {
+	    		  icon: 1,
+	    		  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    } else{
+	    	layer.msg('服務器未響應，請稍後重試！', {
+	    		  icon: 3,
+	    		  time: 3000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    }
+	}); 
+}
+
+
+function initUpVideoFileOne(id,showId,label,initImg){
+	$('#'+id+'').fileinput({
+		 showUpload : true,
+	     showRemove : false,
+	     showCaption: false,
+		 showPreview : true, //是否显示预览'
+		 maxFileSize:50000,
+	     language : 'zh',
+		 uploadUrl: 'video/uploadVideo',
+		 allowedPreviewTypes : [ 'video' ],
+	     allowedFileExtensions : [ '3gp', 'asf', 'avi','dat', 'dv', 'flv','f4v', 'gif', 'm2t','m3u8', 'm4v', 'mj2','mjpeg', 'mkv', 'mov','mp4', 'mpe', 'mpg','mpeg', 'mts', 'ogg','qt', 'rm', 'rmvb','swf', 'ts', 'vob','wmv', 'webm', 'aac','ac3', 'acm', 'amr','ape', 'caf', 'flac','m4a', 'mp3', 'ra','wav', 'wma' ],
+		 previewTemplates:['video'],
+	     browseClass: "am-btn am-btn-danger am-btn-sm", //按钮样式
+	     dropZoneEnabled: false,//是否显示拖拽区域
+		 uploadAsync:false,
+		 uploadClass:'btn btn-default uploadBtnColor',
+		 browseIcon:'<i class="am-icon-cloud-upload"></i>',
+		 browseLabel:label,
+		 removeIcon: '<i class="am-icon-trash"></i>',
+		 layoutTemplates:{'footer':''},
+		 initialPreview:initImg,
+	}).on("filebatchuploadsuccess", function(event, data) {
+	    if(data.response.code==0){
+	    	$('#'+showId+'').val(data.response.data);
+	    	layer.msg('上傳成功', {
+	    		  icon: 1,
+	    		  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    } else{
+	    	layer.msg('服務器未響應，請稍後重試！', {
+	    		  icon: 3,
+	    		  time: 3000 //2秒关闭（如果不配置，默认是3秒）
+	    		}); 
+	    }
+	}); 
+}

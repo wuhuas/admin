@@ -1,0 +1,198 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">新增</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="creationForm" method="post">
+						<div class="am-form-group">
+							<label for="title" class="am-u-sm-2 am-form-label">作品名稱</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="name" class="tpl-form-input" placeholder="请输入作品名稱" name="name"  required="required"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="productStatus" class="am-u-sm-2 am-form-label">作品類型</label>
+							<div class="am-u-sm-10">
+								<select id="type" name ="type" class="selectReset" data-am-selected="{btnWidth: '95%'}"  onchange="vedioUrlHide()" > 
+									<option value="-1">請選擇</option>
+									<option value="0">書法</option>
+									<option value="1">繪畫</option>
+									<option value="2">攝影</option>
+									<option value="3">多媒體</option>
+									<option value="4">作文</option>
+									<option value="5">其他</option>
+								</select>
+							</div>
+						</div>
+						
+						<!-- <div class="am-form-group" id="vedioUrlDiv">
+							<label for="productStatus" class="am-u-sm-2 am-form-label">多媒体链接</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="vedioUrl" class="tpl-form-input" placeholder="请输入多媒体链接" name="vedioUrl" /> 
+							</div>
+						</div> -->
+						
+						<div class="am-form-group">
+							<label for="studentName" class="am-u-sm-2 am-form-label">學生姓名</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="studentName" class="tpl-form-input" placeholder="请输入學生姓名" name="studentName"  required="required"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="school" class="am-u-sm-2 am-form-label">學校</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="school" class="tpl-form-input" placeholder="请输入學校" name="school"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="isHome" class="am-u-sm-2 am-form-label">首頁推薦</label>
+							<div class="am-u-sm-2">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="isHome" value="1" name="isHome" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+							
+							<label for="recommendWorks" class="am-u-sm-2 am-form-label">作品推薦</label>
+							<div class="am-u-sm-2">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="recommendWorks" value="1" name="recommendWorks" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+							
+							
+							<label for="status" class="am-u-sm-2 am-form-label">狀態（上/下架）</label>
+							<div class="am-u-sm-2">
+								<div class="tpl-switch">
+									<input type="checkbox"
+										class="ios-switch bigswitch tpl-switch-btn am-margin-top-xs"
+										id="status" value="1" name="status" />
+									<div class="tpl-switch-btn-view">
+										<div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="weight" class="am-u-sm-2 am-form-label">權重</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="weight" class="tpl-form-input" placeholder="请输入權重" name="weight"/> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label for="coverUrl" class="am-u-sm-2 am-form-label">封面圖</label>
+							<div class="am-u-sm-10">
+								<input id="uploadImg" type="file" name="file" accept="image/*" />
+								<input id="coverUrl" type="hidden"  name="coverUrl"/>
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+                            <label for="contentEditor" class="am-u-sm-2 am-form-label">內容</label>
+                            <div class="am-u-sm-10 am-margin-top-xs">
+                                <textarea class="" rows="10" id="content" name="content" placeholder="请输入內容"></textarea>
+                                 <script>
+                                var contentEditor = CKEDITOR.replace('content');
+					            </script>
+                            </div>
+                        </div>
+						
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#creationForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('creation/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+		
+		validateNewsCategoryForm();
+		function validateNewsCategoryForm(){
+		    $('#creationForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		            name : {
+		                required : true
+		            },
+		            studentName:{
+		            	required : true
+		            },
+		            type:{
+		            	min : 0
+		            }
+		        },
+		        messages : {
+		        	name : {
+		                required : "標題不能為空"
+		            },
+		            studentName:{
+		            	required : "學生姓名不能為空"
+		            },
+		            type:{
+		            	min : "請選擇作品類型"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	CKEDITOR.instances.content.updateElement(); 
+		        	commit('creationForm', 'creation/save', 'creation/listUI');
+		        }
+		    });
+	    }
+		initUpImgFileOne('uploadImg','coverUrl','添加封面圖',"");
+		
+		]]>
+	</script>
+	
+	
+	
+		<script>
+
+	/* 	$("#vedioUrlDiv").hide();
+	
+	function vedioUrlHide(){
+		if($("#type").val()==3){
+			$("#vedioUrlDiv").show();
+		}else{
+			$("#vedioUrlDiv").hide();
+		}
+		
+	} */
+	
+	
+	
+	
+	</script>
+	
+	

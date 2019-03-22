@@ -1,0 +1,109 @@
+
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">用户列表</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+						<div class="am-form-group">
+							<div class="am-btn-toolbar">
+								<div class="am-btn-group am-btn-group-xs">
+									<button shiro:hasPermission="user:add" type="button" class="am-btn am-btn-default am-btn-success" onclick="loadPage('user/form')">
+										<span class="am-icon-plus" ></span> 新增
+									</button>
+									<button type="button" onclick="resetPassword()" shiro:hasPermission="user:resetPassword" class="am-btn am-btn-default am-btn-warning">
+										<span class="am-icon-archive"></span> 重置密碼
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 am-u-md-12 am-u-lg-3 am-u-sm-push-3">
+						<div
+							class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+							<input type="text" class="am-form-field " placeholder="姓名、賬戶名..." id="name" th:value="${name}" /> <span
+								class="am-input-group-btn">
+								<button
+									class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"
+									type="button" onclick="searchUser()"></button>
+							</span>
+						</div>
+					</div>
+
+					<div class="am-u-sm-12">
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>選擇</th>
+									<th>賬戶名</th>
+									<th>姓名</th>
+									<th>角色</th>
+									<th>是否刪除</th>
+									<th>是否鎖定</th>
+									<th>創建人</th>
+									<th>創建時間</th>
+									<th>更新時間</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record:${page.records}">
+								<td> <input type="radio" name="checkId" th:value="${record.id}"/></td>
+									<td th:text="${record.accountName}"></td>
+									<td th:text="${record.userName}"></td>
+									<td th:text="${record.role.name}"></td>
+									<td th:text="${record.deleteStatus}?'是':'否'"></td>
+									<td th:text="${record.locked}?'是':'否'"></td>
+									<td th:text="${record.creatorName}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${#dates.format(record.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'user/'+${record.id}+'/select\');'" shiro:hasPermission="user:edit"> <i class="am-icon-pencil"></i> 编辑</a> 
+											<a href="javascript:;" th:onclick="'javascript:del(\'user/'+${record.id}+'/delete\',\'user/listUI\');'" class="tpl-table-black-operation-del del-btn" shiro:hasPermission="user:delete"><i class="am-icon-trash"></i> 删除</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+/* 	$('select').selected(); */
+	var params =['name'];
+    initPage([[${page.pages}]],[[${page.current}]],'user/listUI',params);		
+	function searchUser(){
+		var name = $('#name').val();
+		loadPage('user/listUI?name='+name);
+	}
+	
+	function resetPassword(){
+		var checkId = getCheck();
+		if(''!=checkId){
+			loadPage('user/'+checkId+'/toRestPassword');
+		}
+	}
+		]]>
+	</script>
+

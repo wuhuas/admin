@@ -1,0 +1,88 @@
+
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">用戶登錄日誌</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+						<div class="am-form-group">
+							<div class="am-btn-toolbar">
+								<div class="am-btn-group am-btn-group-xs">
+								<!-- 	<button type="button" class="am-btn am-btn-default am-btn-success" onclick="loadPage('resource/form')" shiro:hasPermission="resource:add">
+										<span class="am-icon-plus" ></span> 新增
+									</button> -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 am-u-md-12 am-u-lg-3 am-u-sm-push-3">
+						<div
+							class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+							<input type="text" class="am-form-field " placeholder="賬戶名..." id="accountName" th:value="${accountName}" /> <span
+								class="am-input-group-btn">
+								<button
+									class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"
+									type="button" onclick="searchResource()"></button>
+							</span>
+						</div>
+					</div>
+
+					<div class="am-u-sm-12">
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>編號</th>
+									<th>賬戶名</th>
+									<th>IP</th>
+									<th>說明</th>
+									<th>狀態</th>
+									<th>登錄時間</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record:${page.records}" >
+									<td th:text="${record.id}"></td>
+									<td th:text="${record.accountName}"></td>
+									<td th:text="${record.ip}"></td>
+									<td th:text="${record.remark}"></td>
+									<td th:text="${record.status}"></td>
+									<td th:text="${#dates.format(record.loginTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+	$('select').selected();
+	var params =['accountName'];
+	
+	initPage([[${page.pages}]],[[${page.current}]],'loginlog/listUI',params);
+	
+	function searchResource(){
+		var accountName = $('#accountName').val()==null?'':$('#accountName').val();
+		loadPage('loginlog/listUI?accountName='+accountName);
+	}
+	
+	]]>
+	</script>
+

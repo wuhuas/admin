@@ -1,0 +1,246 @@
+package com.knowledge.common.business.periodical.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.FieldFill;
+import com.baomidou.mybatisplus.enums.IdType;
+
+/**
+ * <p>
+ * 精选期刊
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-28
+ */
+@TableName("tb_selected_periodical")
+public class TbSelectedPeriodical extends Model<TbSelectedPeriodical> {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+	@TableId(value="id", type= IdType.AUTO)
+	private Integer id;
+    /**
+     * 杂志名称
+     */
+	private String name;
+    /**
+     * 编者的话
+     */
+	private String content;
+    /**
+     * 出版期数
+     */
+	@TableField("periods_number")
+	private Integer periodsNumber;
+    /**
+     * 发行月
+     */
+	@TableField("release_month")
+	private String releaseMonth;
+    /**
+     * 发布人
+     */
+	@TableField("release_name")
+	private String releaseName;
+    /**
+     * 发布时间
+     */
+	@TableField("release_time")
+	private Date releaseTime;
+    /**
+     * 是否已发送邮件通知(1=已发送，2=没发送)
+     */
+	@TableField("send_email")
+	private Integer sendEmail;
+	
+	/**
+	 * 邮件发送时间
+	 */
+	@TableField("send_time")
+	private Date sendTime;
+	
+    /**
+     * 封面链接
+     */
+	@TableField("cover_url")
+	private String coverUrl;
+    /**
+     * 杂志链接
+     */
+	@TableField("magazine_url")
+	private String magazineUrl;
+	@TableField("create_user")
+	private String createUser;
+	@TableField(value = "create_time",fill = FieldFill.INSERT)
+	private Date createTime;
+	@TableField("update_user")
+	private String updateUser;
+	@TableField(value = "update_time",fill = FieldFill.UPDATE)
+	private Date updateTime;
+	
+	private Integer state;
+
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Integer getPeriodsNumber() {
+		return periodsNumber;
+	}
+
+	public void setPeriodsNumber(Integer periodsNumber) {
+		this.periodsNumber = periodsNumber;
+	}
+
+	public String getReleaseMonth() {
+		return releaseMonth;
+	}
+
+	public void setReleaseMonth(String releaseMonth) {
+		this.releaseMonth = releaseMonth;
+	}
+
+	public String getReleaseName() {
+		return releaseName;
+	}
+
+	public void setReleaseName(String releaseName) {
+		this.releaseName = releaseName;
+	}
+
+	public Date getReleaseTime() {
+		return releaseTime;
+	}
+
+	public void setReleaseTime(Date releaseTime) {
+		this.releaseTime = releaseTime;
+	}
+
+	public Integer getSendEmail() {
+		return sendEmail;
+	}
+
+	public void setSendEmail(Integer sendEmail) {
+		this.sendEmail = sendEmail;
+	}
+
+	public String getCoverUrl() {
+		return coverUrl;
+	}
+
+	public void setCoverUrl(String coverUrl) {
+		this.coverUrl = coverUrl;
+	}
+
+	public String getMagazineUrl() {
+		return magazineUrl;
+	}
+
+	public void setMagazineUrl(String magazineUrl) {
+		this.magazineUrl = magazineUrl;
+	}
+
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
+
+	public Date getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	@Override
+	public String toString() {
+		return "TbSelectedPeriodical{" +
+			", id=" + id +
+			", name=" + name +
+			", content=" + content +
+			", periodsNumber=" + periodsNumber +
+			", releaseMonth=" + releaseMonth +
+			", releaseName=" + releaseName +
+			", releaseTime=" + releaseTime +
+			", sendEmail=" + sendEmail +
+			", sendTime=" + sendTime +
+			", coverUrl=" + coverUrl +
+			", magazineUrl=" + magazineUrl +
+			", createUser=" + createUser +
+			", createTime=" + createTime +
+			", updateUser=" + updateUser +
+			", updateTime=" + updateTime +
+			"}";
+	}
+}

@@ -1,0 +1,81 @@
+<style>
+.magazineorder-all{
+	margin-left:50px;
+}
+.am-g{
+	border-bottom: 1px solid #5a5252;
+}
+.border-right{
+	border-right: 1px solid #5a5252;
+}
+.form-title{
+	color:black;
+}
+.border-left{
+	border-left: 1px solid #5a5252;
+}
+.border-top{
+	border-top: 1px solid #5a5252;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">電子雜誌訂閱信息</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<div class="magazineorder-all">
+						<div class="am-g am-g-fixed border-top border-left">
+						  <div class="am-u-sm-3 border-right form-title">用戶名</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.nickname =='' || record.nickname == null  ? '&nbsp;' : record.nickname}"></div>
+						  <div class="am-u-sm-3 border-right form-title">年班</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.grade =='' || record.grade == null  ? '&nbsp;' : record.grade}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">學校</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.school =='' || record.school == null  ? '&nbsp;' : record.school}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">註冊郵箱</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.email =='' || record.email == null  ? '&nbsp;' : record.email}"></div>
+						  <div class="am-u-sm-3 border-right form-title">訂閱郵箱</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.subEmail =='' || record.subEmail == null  ? '&nbsp;' : record.subEmail}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">Whatsapp</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.whatsapp =='' || record.whatsapp == null  ? '&nbsp;' : record.whatsapp}"></div>
+						  <div class="am-u-sm-3 border-right form-title">微信</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.wechat  =='' || record.wechat == null  ? '&nbsp;' : record.wechat}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">通信地址</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.school =='' || record.school == null  ? '&nbsp;' : record.school}"></div>
+						  <div class="am-u-sm-3 border-right form-title">聯絡電話</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.phone =='' || record.phone == null  ? '&nbsp;' : record.phone}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">註冊時間</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.subTime =='' || record.subTime == null  ? '&nbsp;' : #dates.format(record.subTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						  <div class="am-u-sm-3 border-right form-title">訂閱時間</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.registerTime =='' || record.registerTime == null  ? '&nbsp;' : #dates.format(record.registerTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						</div>
+					</div>
+					
+					<hr/>
+					<div class="am-form-group">
+						<div class="am-u-sm-10 am-u-sm-push-2">
+							<button type="button" onclick="loadPage('e-magazineorder/listUI')"
+								class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>

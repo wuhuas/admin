@@ -1,0 +1,159 @@
+package com.knowledge.api.business.news;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.feilong.core.Validator;
+import com.knowledge.api.base.config.jwt.annotation.UserLoginToken;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Pager;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.base.util.SensitiveWordUtil;
+import com.knowledge.common.business.activity.service.ITbActivityManageService;
+import com.knowledge.common.business.creation.service.ITbCreationManageService;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.member.service.ITbMemberService;
+import com.knowledge.common.business.message.entity.TbMessageManage;
+import com.knowledge.common.business.message.service.ITbMessageKeywordService;
+import com.knowledge.common.business.message.service.ITbMessageManageService;
+import com.knowledge.common.business.news.entity.NewsVo;
+import com.knowledge.common.business.news.entity.TbNewsCategory;
+import com.knowledge.common.business.news.entity.TbNewsInfo;
+import com.knowledge.common.business.news.service.ITbNewsCategoryService;
+import com.knowledge.common.business.news.service.ITbNewsInfoService;
+import com.knowledge.common.business.periodical.service.ITbSelectedPeriodicalService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * <p>
+ * 资讯信息详情  前端控制器
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-09
+ */
+@RestController
+@Api(value="资讯Controller",tags={"资讯操作接口"})
+public class TbNewsInfoController extends BaseController {
+
+	@Autowired
+	private ITbNewsInfoService newsService;
+	
+	@Autowired
+	private ITbMessageManageService messagenService;
+	
+	@Autowired
+	private ITbNewsCategoryService catService;
+	
+	@Autowired
+	private ITbCreationManageService creationService;
+	
+
+	@Autowired
+	private ITbSelectedPeriodicalService periodicalService;
+	
+	@Autowired
+	private ITbActivityManageService activityManageService;
+	
+	@Autowired
+	private ITbMemberService memberService;
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/newsinfo/listUI")
+	@ApiOperation(value = "新闻咨询列表",notes="新闻咨询列表 传入参数为 categoryId：资讯类型， setTop： 是否置顶 ，weight ：热门资讯")
+    public Result listUI(@RequestBody Pager<TbNewsInfo> param) {
+		Condition create = Condition.create();
+		Map<String, Object> map = param.getMap();
+		if(Validator.isNotNullOrEmpty(map.get("categoryId"))) {
+			create.eq("category_id",map.get("categoryId"));
+		}
+		if(Validator.isNotNullOrEmpty(map.get("setTop"))) {
+			create.orderBy("top_time", false);	
+		}
+		if(Validator.isNotNullOrEmpty(map.get("weight"))) {
+			create.orderBy("weight", false);	
+		}
+		create.eq("status", 1);
+		create.orderBy("create_time", false);
+		Page<TbNewsInfo> list = newsService.selectPage(param.getPagePlus(),create);
+		List<TbNewsInfo> newsinfos=list.getRecords();
+		for(TbNewsInfo news:newsinfos) {
+			TbNewsCategory cat=	catService.selectById(news.getCategoryId());
+		
+			news.setCategoryName(cat.getName());
+		}
+		return json(list);
+    }
+	
+	@GetMapping("/newsinfo/getNewsInfo")
+	@ApiOperation(value = "新闻咨询详情信息 ",notes="新闻咨询详情信息")
+    public Result getCreationInfo(@RequestParam Integer id) {
+		TbNewsInfo list = newsService.selectById(id);
+		if(Validator.isNotNullOrEmpty(list)) {
+			list.setBrowseTotal(list.getBrowseTotal()+1);
+			list.updateById(); 
+			TbNewsCategory cat=	catService.selectById(list.getCategoryId());
+			list.setCategoryName(cat.getName()!=null?cat.getName():"");
+			List<TbMessageManage> messageManages=messagenService.selectList(Condition.create().eq("info_id", id));
+			for(TbMessageManage mess:messageManages) {
+				TbMember me=memberService.selectById(mess.getMemId());
+				if(Validator.isNotNullOrEmpty(me)) {
+				mess.setMessageName(me.getNickname()!=null?me.getNickname():"");
+				mess.setMessageImage(me.getHeadPortraitUrl()!=null?me.getHeadPortraitUrl():"");
+				mess.setMessageSex(me.getSex());
+				}
+			}
+			list.setMessageList(messageManages);
+		}
+		return json(list);
+    }
+	@UserLoginToken
+	@PostMapping("/newsinfo/message")
+	@ApiOperation(value = "发布留言 ",notes="发布留言")
+	public Result message(@RequestBody TbMessageManage tbmessagemanage){
+	/*	SensitivewordFilter filter = SensitivewordFilter.getInstance();
+		String text = filter.replaceSensitiveWord(tbmessagemanage.getContent(), 1, "*");
+		tbmessagemanage.setContent(text);*/
+		return messagenService.insertMessage(tbmessagemanage)?success():error();
+	}
+	
+	@PostMapping("/newsinfo/allList")
+	@ApiOperation(value = "全局搜索",notes="参数title 标题")
+    public Result allList(@RequestBody Pager<NewsVo> pager) {
+		
+		Page<NewsVo> list = newsService.selectAllPage(pager.getPagePlus(),pager.getMap());
+		return json(list);
+    }
+	
+	@GetMapping("/newsinfo/getAllInfo")
+	@ApiOperation(value = "新闻咨询详情信息 ",notes="新闻咨询详情信息")
+    public Result getCreationInfo(@RequestParam Integer id,@RequestParam Integer type) {
+		if(type.equals(1)) {
+			return json(newsService.selectById(id));
+		}
+		if(type.equals(2)) {
+			return json(periodicalService.selectById(id));
+		}
+		if(type.equals(3)) {
+			return json(activityManageService.selectById(id));
+		}
+		if(type.equals(4)) {
+			return json(creationService.selectById(id));
+		}
+		return error();
+		
+    }
+
+
+}

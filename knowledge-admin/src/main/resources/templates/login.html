@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>紫荊知識網後台管理</title>
+<meta name="description" content="紫荊知識網後台管理"/>
+<meta name="keywords" content="index"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="renderer" content="webkit"/>
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="icon" type="image/png" th:href="@{/static/ui/i/icon.png}"/>
+<link rel="apple-touch-icon-precomposed" th:href="@{/static/ui/i/app-icon72x72@2x.png}"/>
+<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+<link rel="stylesheet" th:href="@{/static/ui/css/amazeui.min.css}" />
+<link rel="stylesheet" th:href="@{/static/ui/css/amazeui.datatables.min.css}" />
+<link rel="stylesheet" th:href="@{/static/ui/css/app.css}"/>
+<script th:src="@{/static/ui/js/jquery.min.js}"></script>
+</head>
+<body data-type="login">
+	<script th:src="@{/static/ui/js/theme.js}"></script>
+	<div class="am-g tpl-g">
+		<div class="tpl-login">
+			<div class="tpl-login-content">
+				<div class="tpl-login-logo"></div>
+				<form class="am-form tpl-form-line-form" th:attr="action=@{/dologin}" method="post">
+					<div class="am-form-group">
+						<input type="text" class="tpl-form-input" id="user-name" name="username"  required="required"
+							placeholder="請輸入賬號"/>
+					</div>
+					<div class="am-form-group">
+						<input type="password" class="tpl-form-input" id="user-name" name="password" required="required"
+							placeholder="請輸入密碼"/>
+					</div>
+					<div class="am-form-group tpl-login-remember-me">
+						<input id="remember-me" type="checkbox" name="rememberMe"/> <label
+							for="remember-me"> 記住密碼 </label>
+					</div>
+					<div class="am-form-group">
+						<input type="submit" class="am-btn am-btn-primary  am-btn-block tpl-btn-bg-color-success  tpl-login-btn" value="登錄" />
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script th:src="@{/static/ui/js/amazeui.min.js}"></script>
+	<script th:src="@{/static/layer-v2.3/layer.js}"></script>	
+	<script th:src="@{/static/ui/js/app.js}"></script>
+	<script th:inline="javascript">
+		var msg = [[${msg}]];
+		console.log(msg);
+		$(document).ready(function() {
+			//错误提示信息
+			if (msg!= null) {
+		    	layer.alert(msg, {icon : 5,shift : 6,time : 0});
+			}
+		});
+	</script>
+</body>
+
+</html>

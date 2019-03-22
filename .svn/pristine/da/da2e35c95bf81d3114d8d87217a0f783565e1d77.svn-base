@@ -1,0 +1,179 @@
+<link type="text/css" rel="stylesheet" href="static/ui/css/amazeui.datetimepicker.css"/>
+
+<style>
+.magazineorder-all{
+	margin-left:50px;
+}
+.am-g{
+	border-bottom: 1px solid #5a5252;
+}
+.border-right{
+	border-right: 1px solid #5a5252;
+}
+.form-title{
+	color:black;
+}
+.border-left{
+	border-left: 1px solid #5a5252;
+}
+.border-top{
+	border-top: 1px solid #5a5252;
+}
+#activity-head{
+	height: 180px;
+	width: 100%;
+}
+#enroll-time,#activity-time{
+	float: left;
+	margin-top:50px;
+}
+#activity-time{
+	margin-left: 50px;
+}
+
+</style>
+
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">查看報名詳情</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+
+				<div class="widget-body am-fr">
+					<div class="magazineorder-all">
+						<div id="activity-head">
+							<div id="activity-name">
+								<h1>
+								<span th:text="${record.activityName}"></span>
+								<span th:if="${record.isCost} == 1">（收費）</span>
+								<span th:if="${record.isCost} == 2">（免費）</span>
+								</h1>
+							</div>
+							<div>
+								<div id="enroll-time"><p>報名時間:</p><p th:text="${#dates.format(record.enrollStartTime, 'yyyy-MM-dd HH:mm') + ' ~ ' + #dates.format(record.enrollEndTime, 'yyyy-MM-dd HH:mm')}"></p></div>
+								<div id="activity-time"><p>活動時間:</p><p th:text="${#dates.format(record.activityStartTime, 'yyyy-MM-dd HH:mm') + ' ~ ' + #dates.format(record.activityEndTime, 'yyyy-MM-dd HH:mm')}"></p></div>
+							</div>
+						</div>
+						<hr/>
+						<div class="am-g am-g-fixed border-left border-top">
+						  <div class="am-u-sm-3 border-right form-title">姓名</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.name}"></div>
+						  <div class="am-u-sm-3 border-right form-title">性別</div>
+						  <div class="am-u-sm-3 border-right" th:if="${record.gender} eq '0'">男</div>
+						  <div class="am-u-sm-3 border-right" th:if="${record.gender} eq '1'">女</div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">學校</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.school}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">年班</div>
+						  <div class="am-u-sm-3 border-right" th:if="${record.annualClass} eq null">　</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.annualClass}"></div>
+						  <div class="am-u-sm-3 border-right form-title">Email</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.email}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">聯絡電話</div>
+						  <div class="am-u-sm-9 border-right" th:if="${record.phone} eq null">　</div>
+						  <div class="am-u-sm-9 border-right" th:text="${record.phone}"></div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">報名時間</div>
+						  <div class="am-u-sm-3 border-right" th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						  <div class="am-u-sm-6 border-right" th:if="${record.payVoucherUrl} eq null">　</div>
+						</div>
+						<div th:if="${record.payVoucherUrl} != null" class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right  form-title" >付款憑證</div>
+						  <div class="am-u-sm-9 border-right">
+							<a th:each="urls,usrlsStat: ${#strings.listSplit(record.payVoucherUrl,',')}" th:href="@{${urls}}" target="view_window" th:text="憑證賬單+${usrlsStat.index+1}" style="padding-right:15px;" ></a>
+						  </div>
+						</div>
+						<div class="am-g am-g-fixed border-left">
+						  <div class="am-u-sm-3 border-right form-title">審核人</div>
+						  <div class="am-u-sm-3 border-right" th:if="${record.examineName} eq null">　</div>
+						  <div class="am-u-sm-3 border-right" th:text="${record.examineName}"></div>
+						  <div class="am-u-sm-3 border-right form-title">審核時間</div>
+						  <div class="am-u-sm-3 border-right" th:if="${record.examineTime} eq null">　</div>
+						  <div class="am-u-sm-3 border-right" th:text="${#dates.format(record.examineTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+						</div>
+					</div>
+					
+					<hr/>
+					<div class="am-form-group">
+					
+						<div class="am-u-sm-12 am-fl">
+							<button type="button" th:if="${record.status eq 0}"  th:onclick="'javascript:changeStatus('+${record.id}+',1);'" 
+								class="am-btn am-btn-success tpl-btn-bg-color-success am-fl">確認報名</button>
+							<button type="button" th:if="${record.status eq 0}"  th:onclick="'javascript:changeStatus('+${record.id}+',2);'" 
+								class="am-btn am-btn-success tpl-btn-bg-color-success am-fl" style="margin-left:15px;">拒絕報名</button>
+							<button type="button" onclick="loadPage('activityEnroll/listUI')"
+								class="am-btn am-btn-success tpl-btn-bg-color-success " style="margin-left:15px;">返回報名列表</button>
+						</div>
+
+
+
+						
+						
+						
+					</div>
+				</div>
+
+
+
+
+
+			</div>
+		</div>
+	</div>
+
+	</div>
+	
+
+
+<script>
+function changeStatus(id,status){
+	var context;
+	if (status == 1) {
+		context = '確認報名吗？'
+	}else if(status == 2){
+		context = '確認拒絕吗？'
+	}
+	
+	
+	layer.confirm(context, {
+        icon : 3,
+        title : '提示'
+    }, function(index, layero) {
+        $.ajax({
+            type : "GET",
+            url :  "activityEnroll/changeStatus/"+id+"/"+status,
+            dataType : "json",
+            success : function(resultdata) {
+                if (resultdata.code=="0") {
+                    layer.msg(resultdata.msg, {
+                        icon : 1
+                    });
+                    loadPage('activityEnroll/listUI');
+                } else {
+                    layer.msg(resultdata.msg, {
+                        icon : 0
+                    });
+                }
+            },
+            error : function(errorMsg) {
+                layer.msg('服務器未響應，請稍後重試！', {
+                    icon : 3
+                });
+            }
+        });
+        layer.close(index);
+    });
+}
+</script>
+	

@@ -1,0 +1,118 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">查看广告</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="adForm" method="post">
+					
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">類別</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="typeName" class="tpl-form-input" name="typeName" th:value="${typeName}" readonly="readonly" /> 
+							</div>
+						</div>
+						
+						
+					<div th:each="record,recordStat:${page.records}">
+						<input th:id="contentId+${recordStat.index+1}" type="hidden" th:name ="contentId+${recordStat.index+1}" th:value="${record.id}" />
+						<input id="typeId" type="hidden" name ="typeId" th:value="${record.typeId}" />
+						<input id="size" type="hidden" name ="size" th:value="${size}" />
+
+
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">廣告標題</label>
+							<div class="am-u-sm-10">
+								<input type="text" th:id="title+${recordStat.index+1}" class="tpl-form-input" placeholder="请输入廣告標題" th:name="title+${recordStat.index+1}" th:value="${record.title}"  readonly="readonly"/> 
+							</div>
+						</div>
+						
+												
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">權重</label>
+							<div class="am-u-sm-10">
+								<input type="text" th:id="weight+${recordStat.index+1}" class="tpl-form-input" placeholder="请输入廣告標題" th:name="weight+${recordStat.index+1}" th:value="${record.weight}" readonly="readonly"/> 
+							</div>
+						</div>
+						
+						
+																		
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">跳轉URL</label>
+							<div class="am-u-sm-10">
+								<input type="text" th:id="jumpUrl+${recordStat.index+1}" class="tpl-form-input" placeholder="请输入跳轉URL" th:name="jumpUrl+${recordStat.index+1}" th:value="${record.jumpUrl}" readonly="readonly"/> 
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+							<label class="am-u-sm-2 am-form-label">選擇圖片</label>
+							<div class="am-u-sm-10">
+								<input id="urlNumber" type="hidden" name ="urlNumber" th:value="${recordStat.index+1}" />
+								<input th:id="uploadFile+${recordStat.index+1}" type="file" th:name="file+${recordStat.index+1}"  readonly="readonly"/>
+								<input th:id="pictureUrl+${recordStat.index+1}" type="hidden"  th:name="pictureUrl+${recordStat.index+1}" th:value="${record.pictureUrl}"  readonly="readonly"/>
+							</div>
+						</div>
+
+					</div>
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+
+		
+		for(var i=1;i<$("#size").val()+1;i++){
+			
+			var imgHtml = '';
+			imgHtml = '<img src='+$("#pictureUrl"+i).val()+' alt="" style="max-width:200px;">'
+			
+			initUpImgFileOne('uploadFile'+i,'pictureUrl'+i,'選擇圖片',imgHtml);
+			
+		}
+
+
+
+		
+		]]>
+	
+
+	
+	
+	</script>
+	
+	
+	<script>
+	
+	//删除图片
+	//$(".fileinput-remove").click(
+			
+	//		function(){
+	//			clearUrl($(".fileinput-remove").parents(".file-input").siblings("#urlNumber").val())
+	//		}
+			
+	
+	//);
+			//function($(".fileinput-remove").parents(".file-input").nextUntil("#urlNumber").val()){
+			//	$("#pictureUrl"+i).val()="";
+			//	console.info($("#pictureUrl"+i).val());
+			//}		
+			
+	
+	
+	
+	</script>
+	
+	

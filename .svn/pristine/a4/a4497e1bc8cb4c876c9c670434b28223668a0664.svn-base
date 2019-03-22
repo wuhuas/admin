@@ -1,0 +1,173 @@
+package com.knowledge.api.base.login;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import com.baomidou.kaptcha.Kaptcha;
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.feilong.core.Validator;
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.knowledge.api.base.service.CaptchaService;
+import com.knowledge.common.base.email.service.IMailService;
+import com.knowledge.common.base.enums.EnumResult;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.base.util.MD5Util;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.member.service.ITbMemberService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import sun.misc.BASE64Encoder;
+
+/**
+ * @author jide
+ * @date 2018-12-03
+ */
+@RestController
+@Api(value = "用户API", tags = { "用户操作接口" })
+public class loginApi extends BaseController {
+
+	@Autowired
+	private ITbMemberService memberService;
+	@Autowired
+	private Kaptcha kaptcha;
+
+	@Autowired
+	private DefaultKaptcha producer;
+
+	@Autowired
+	private CaptchaService captchaService;
+
+
+
+	@SuppressWarnings("unchecked")
+	@PostMapping("/api/login")
+	@ApiOperation(value = "用户登录", notes = "用户登录")
+	public Result login(@RequestBody TbMember user) {
+		/*
+		 * if(!kaptcha.validate(user.getCode())) { return
+		 * fail(EnumResult.ERROR_KAPTCHA); }
+		 */
+		TbMember member = memberService.selectOne(Condition.create().eq("email", user.getEmail()));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.DEFIN_ACCOUNT);
+		}
+		if (!member.getPassword().equals(MD5Util.md5(user.getPassword()))) {
+			return fail(EnumResult.ERROR_PASSWORD);
+		}
+		if (!member.getActiveState().equals(1)) {
+			return fail(EnumResult.ERROR_ACTIVE_NOT);
+		}
+		return json(memberService.login(member));
+
+	}
+
+	// @UserLoginToken
+	@PostMapping("/api/register")
+	@ApiOperation(value = "用户注册", notes = "用户注册")
+	public Result register(@RequestBody TbMember user) {
+		String hostName = request.getHeader("Referer");
+		if (Validator.isNullOrEmpty(user)) {
+			return fail(EnumResult.ERROR_PARAM);
+		}
+		user.setHostName(hostName);
+		TbMember member = memberService.selectOne(Condition.create().eq("email", user.getEmail()));
+		if (Validator.isNotNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_EMAIL_USE);
+		}
+		if (!memberService.insertUser(user)) {
+			return error();
+		}
+		return success();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping("/api/active")
+	@ApiOperation(value = "邮箱激活", notes = "邮箱激活")
+	public Result active(@RequestParam String code) {
+		if (Validator.isNullOrEmpty(code)) {
+			return fail(EnumResult.ERROR_PARAM);
+		}
+		TbMember member = memberService.selectOne(Condition.create().eq("active_code", code));
+		if (Validator.isNullOrEmpty(member)) {
+			return fail(EnumResult.ERROR_ACTIVE_FAIL);
+		}
+		if (member.getActiveState() == 1) {
+			return fail(EnumResult.ERROR_URL_INVALID);
+		}
+		if (!memberService.checkTimeOut(member)) {
+			return fail(EnumResult.ERROR_URL_TIMEOUT);
+		}
+		return success();
+
+	}
+
+	@GetMapping("/api/render")
+	@ApiOperation(value = "获取登录验证码", notes = "获取登录验证码")
+	public Result render() {
+		return json(kaptcha.render());
+	}
+
+	@PostMapping("/api/valid")
+	public Result validDefaultTime(@RequestParam String code) {
+		// default timeout 900 seconds
+		return json(kaptcha.validate(code));
+	}
+
+	@PostMapping("/api/validTime")
+	public Result validCustomTime() {
+		try {
+          
+        }catch (Exception ex){
+            return error();
+        }
+		 return error();
+	}
+
+	/**
+	 * 获取验证码
+	 * 
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	@PostMapping("/captcha")
+	public Map<String, Object> captcha(HttpServletResponse response) throws ServletException, IOException {
+
+		// 生成文字验证码
+		String text = producer.createText();
+		// 生成图片验证码
+		ByteArrayOutputStream outputStream = null;
+		BufferedImage image = producer.createImage(text);
+
+		outputStream = new ByteArrayOutputStream();
+		ImageIO.write(image, "jpg", outputStream);
+
+		// 对字节数组Base64编码
+		BASE64Encoder encoder = new BASE64Encoder();
+
+		// 生成captcha的token
+		Map<String, Object> map = captchaService.createToken(text);
+		map.put("img", encoder.encode(outputStream.toByteArray()));
+		return map;
+	}
+
+}

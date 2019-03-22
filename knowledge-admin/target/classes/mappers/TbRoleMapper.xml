@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.admin.base.role.mapper.TbRoleMapper">
+<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.admin.base.role.entity.TbRole">
+		<id column="r_id" property="id" />
+		<result column="r_name" property="name" />
+		<result column="r_key" property="key" />
+		<result column="r_status" property="status" />
+		<result column="r_description" property="description" />
+		<result column="r_create_time" property="createTime" />
+		<result column="r_update_time" property="updateTime" />
+		<collection property="userList" column="id" ofType="com.knowledge.admin.base.user.entity.TbUser">
+			<id property="id" column="u_id"/>
+			<result property="userName" column="u_name" />
+			<result property="accountName" column="u_account_name"/>
+			<result property="password" column="u_password"/>
+			<result property="deleteStatus" column="u_delete_status"/>
+			<result property="locked" column="u_locked"/>
+			<result property="description" column="u_description"/>
+			<result property="credentialsSalt" column="u_credentials_salt"/>
+			<result property="creatorName" column="u_creator_name"/>
+			<result property="createTime" column="u_create_time"/>
+			<result property="updateTime" column="u_update_time"/>
+		</collection>
+	</resultMap>
+
+</mapper>

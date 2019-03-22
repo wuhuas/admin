@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>demo</title>
+    <style>
+        .btn{
+            background: #f56c6c;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid #f56c6c;
+            -webkit-appearance: none;
+            text-align: center;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            margin: 20px 0;
+            transition: .1s;
+            font-weight: 500;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <b>【知識網】電子郵箱驗證</b><br><br>
+    <p>Hi 親愛的  <span th:text="${nickName}"></span>，</p><br><br>
+    <p>歡迎你加入我們。請點擊下方按鈕驗證電子郵箱，開啟你的知識暢遊之旅！</p><br><br>
+    <a th:href="@{${url}}"><button type="button" class="btn" >點擊驗證</button></a><br><br>
+    <p>如果你無法通過上面按鈕驗證電子郵箱，請點擊下面的鏈接，或把它複製到瀏覽器地址欄中打開：</p>
+    <p>（<span th:text="${url}"></span>  该链接在30分钟内有效）</p><br><br>
+    <img src="https://upknowledge.oss-cn-hongkong.aliyuncs.com/content/20181218/logo20181218160451958.jpg" width="100" height="100" />
+    <p>知識網運營團隊 </p>
+</div>
+</body>
+</html>

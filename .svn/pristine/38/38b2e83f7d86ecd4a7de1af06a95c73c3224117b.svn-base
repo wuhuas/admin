@@ -1,0 +1,142 @@
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title am-fl">更新精選期刊</div>
+					<div class="widget-function am-fr">
+						<a href="javascript:;" class="am-icon-cog"></a>
+					</div>
+				</div>
+				<div class="widget-body am-fr">
+					<form class="am-form tpl-form-line-form" id="periodicalForm" method="post">
+						<input type = "hidden" name="id" th:value="${record.id}" />
+						<div class="am-form-group">
+							<label for="name" class="am-u-sm-2 am-form-label">雜誌名稱</label>
+							<div class="am-u-sm-10">
+								<input type="text" id="name" class="tpl-form-input" placeholder="请输入雜誌名稱" name="name" th:value="${record.name}"  required="required"/> 
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="periodsNumber" class="am-u-sm-2 am-form-label">出版期數</label>
+							<div class="am-u-sm-1" style="width: 5.333333%;">總第</div>
+							<div class="am-u-sm-2">
+								<input type="number" id="periodsNumber" class="tpl-form-input" placeholder="请输入雜誌名稱" th:value="${record.periodsNumber}" name="periodsNumber" min="0"  required="required"/> 
+							</div>
+							<div class="am-u-sm-1" style="float:left;">期</div>
+						</div>
+						<div class="am-form-group">
+							<label for="releaseMonth" class="am-u-sm-2 am-form-label">發行月份</label>
+							<div classs="am-u-sm-10">
+								<div class="input-group input-daterange" style="width: 83%;">
+								<input type="text" id="releaseMonth" class="empty date-input am-form-field tpl-form-no-bg" name="releaseMonth" placeholder="yyyy-mm" readonly="readonly" th:value="${record.releaseMonth}"> 
+								</div>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="coverUrl" class="am-u-sm-2 am-form-label">封面圖</label>
+							<div class="am-u-sm-10">
+								<input id="uploadImg" type="file" name="file" accept="image/*" />
+								<input id="coverUrl" type="hidden"  name="coverUrl" th:value="${record.coverUrl}"/>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<label for="magazineUrl" class="am-u-sm-2 am-form-label">雜誌</label>
+							<div class="am-u-sm-10">
+								<input id="uploadFile" type="file" name="file" />
+								<input id="magazineUrl" type="hidden"  name="magazineUrl" th:value="${record.magazineUrl}"/>
+							</div>
+						</div>
+						
+						<div class="am-form-group">
+                            <label for="contentEditor" class="am-u-sm-2 am-form-label">編者的話</label>
+                            <div class="am-u-sm-10 am-margin-top-xs">
+                                <textarea class="" rows="10" id="content" name="content" placeholder="请输入內容"></textarea>
+                                 <script>
+                                var contentEditor = CKEDITOR.replace('content');
+					            </script>
+                            </div>
+                        </div>
+						
+						<div class="am-form-group">
+							<div class="am-u-sm-10 am-u-sm-push-2">
+								
+								<button type="button" onclick="javascript:$('#periodicalForm').submit();"
+									class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+										<button type="button" onclick="loadPage('periodical/listUI')"
+									class="am-btn am-btn-success tpl-btn-bg-color-success ">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<script th:inline="javascript">
+	<![CDATA[
+		$('select').selected();
+		contentEditor.setData([[${record.content}]]);
+		$("#releaseMonth").datepicker({
+			format: 'yyyy-mm',
+			viewMode: 'years',
+			minViewMode: 'months',
+			autoClose:true
+	    }); 
+		
+		validateNewsCategoryForm();
+		function validateNewsCategoryForm(){
+		    $('#periodicalForm').validate({
+		        errorElement : 'span',
+		        errorClass : 'am-icon-times',
+		        focusInvalid : true,
+		        onkeyup:false,
+		        ignore : "",
+		        rules : {
+		            name : {
+		                required : true
+		            },
+		            periodsNumber : {
+		                required : true
+		            },
+		            releaseMonth : {
+		                required : true
+		            }
+		        },
+		        messages : {
+		        	name : {
+		                required : "標題不能為空"
+		            },
+		            periodsNumber : {
+		                required : "出版期數不能為空"
+		            },
+		            releaseMonth : {
+		                required : "發行月份不能為空"
+		            }
+		        },
+		        submitHandler : function(form) {
+		        	CKEDITOR.instances.content.updateElement(); 
+		        	commit('periodicalForm', 'periodical/save', 'periodical/listUI');
+		        }
+		    });
+	    }
+		
+		var imgHtml = '';
+		if([[${record.coverUrl}]] != null){
+			imgHtml = '<img src='+[[${record.coverUrl}]]+' alt="" style="max-width:200px;">'
+		}
+		initUpImgFileOne('uploadImg','coverUrl','添加封面圖',imgHtml);
+		var pdfHtml = '';
+		if([[${record.magazineUrl}]] != null){
+			pdfHtml = '<embed class="kv-preview-data" src="'+[[${record.magazineUrl}]]+'" width="160px" height="160px" type="application/pdf" internalinstanceid="12">';
+		}
+		//var fileHtml='<object class="kv-preview-da ta file-object" data="'+[[${record.magazineUrl}]]+'" type="" width="160px" height="160px"></object>';
+		initUpOtherFileOne('uploadFile','magazineUrl','添加雜誌',pdfHtml);
+		
+		
+		
+		
+		
+		]]>
+	</script>

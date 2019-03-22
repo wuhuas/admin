@@ -1,0 +1,20 @@
+package com.knowledge.common.business.periodical.service.impl;
+
+import com.knowledge.common.business.periodical.entity.TbSelectedPeriodical;
+import com.knowledge.common.business.periodical.mapper.TbSelectedPeriodicalDao;
+import com.knowledge.common.business.periodical.service.ITbSelectedPeriodicalService;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ * 精选期刊 服务实现类
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-28
+ */
+@Service
+public class TbSelectedPeriodicalServiceImpl extends ServiceImpl<TbSelectedPeriodicalDao, TbSelectedPeriodical> implements ITbSelectedPeriodicalService {
+	
+}

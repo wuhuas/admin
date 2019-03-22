@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.news.mapper.TbNewsInfoDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.knowledge.common.business.news.entity.TbNewsInfo">
+		<id column="id" property="id" />
+		<result column="category_id" property="categoryId" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="author" property="author" />
+		<result column="comment_total" property="commentTotal" />
+		<result column="browse_total" property="browseTotal" />
+		<result column="set_top" property="setTop" />
+		<result column="top_time" property="topTime" />
+		<result column="status" property="status" />
+		<result column="is_home" property="isHome" />
+		<result column="open_comment" property="openComment" />
+		<result column="pdf_url" property="pdfUrl" />
+		<result column="enclosure_url" property="enclosureUrl" />
+		<result column="video_url" property="videoUrl" />
+		<result column="cover_url" property="coverUrl" />
+		<result column="weight" property="weight" />
+		<result column="create_time" property="createTime" />
+		<result column="create_user" property="createUser" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_user" property="updateUser" />
+		<result column="category_name" property="categoryName" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		i.id, i.category_id, i.title, i.content, i.author, i.comment_total,
+		i.browse_total, i.set_top, i.top_time, i.status,i.is_home,
+		i.open_comment, i.pdf_url,
+		i.enclosure_url,i.video_url,i.cover_url,i.weight, i.create_time,
+		i.create_user, i.update_time, i.update_user
+	</sql>
+
+	<select id="selectByPage" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		, c.name as category_name
+		from tb_news_info i left join
+		tb_news_category c on i.category_id = c.id
+		<where>
+			<if test="title != null and title != ''">
+				and i.title like CONCAT('%',#{title},'%')
+			</if>
+
+			<if test="categoryId != null and categoryId != 0">
+				and i.category_id = #{categoryId}
+			</if>
+
+			<if test="from != null and from != ''">
+				and DATE_FORMAT(i.create_time,'%Y-%m-%d') &gt;=
+				DATE_FORMAT(#{from},'%Y-%m-%d')
+			</if>
+
+			<if test="to != null and to != ''">
+				and DATE_FORMAT(i.create_time,'%Y-%m-%d') &lt;=
+				DATE_FORMAT(#{to},'%Y-%m-%d')
+			</if>
+
+			<if test="createUser != null and createUser != ''">
+				and i.create_user like CONCAT('%',#{createUser},'%')
+			</if>
+
+			<if test="status != null and status != 0">
+				and i.status = #{status}
+			</if>
+
+			<if test="setTop != null and setTop != 0">
+				and i.set_top = #{setTop}
+			</if>
+
+			<if test="yearMonth != null and yearMonth != ''">
+				and DATE_FORMAT(i.create_time,'%Y-%m') = #{yearMonth}
+			</if>
+
+		</where>
+		order by
+		<if test="isAsc == 'true'">
+			i.${sort}
+		</if>
+		<if test="isAsc == 'false'">
+			i.${sort} desc
+		</if>
+		<if test="isAsc == null or isAsc == ''">
+			i.top_time desc
+		</if>
+	</select>
+
+	<select id="selectByTop" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		, c.name as category_name
+		from tb_news_info i left join
+		tb_news_category c on i.category_id = c.id
+		<where>
+			${ew.sqlSegment}
+		</where>
+	</select>
+
+
+	<select id="selectAllPage" resultType="com.knowledge.common.business.news.entity.NewsVo"
+		parameterType="map">
+
+		SELECT
+		*
+		FROM
+		(
+		SELECT
+		news.id AS id,
+		news.title AS title,
+		news.cover_url as image,
+		1 AS type,
+		news.create_time,
+		news.status
+		FROM
+		tb_news_info news UNION ALL
+		SELECT
+		per.id AS id,
+		per.`name` AS title,
+		per.cover_url as image,
+		2 AS type,
+		per.create_time,
+		1 as status
+		FROM
+		tb_selected_periodical per UNION ALL
+		SELECT
+		activity.id,
+		activity.activity_name AS title,
+		activity.cover_url as image,
+		3 AS type,
+		activity.create_time,
+		activity.status
+		FROM
+		tb_activity_manage activity UNION ALL
+		SELECT
+		creation.id,
+		creation.name AS title,
+		creation.cover_url as image,
+		4 AS type,
+		creation.create_time ,
+		creation.status
+		FROM
+		tb_creation_manage creation
+		) AS newsper
+
+		<where>
+			<if test="title != null and title != ''">
+				and newsper.title like CONCAT('%',#{title},'%')
+				AND
+				newsper.status=1
+
+			</if>
+		</where>
+		ORDER BY
+		newsper.create_time DESC
+
+	</select>
+
+
+	<select id="selectByIdnews" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		, c.name as category_name
+		from tb_news_info i left join
+		tb_news_category c on i.category_id = c.id
+		<where>
+			<if test="id != null">
+				and i.id=#{id}
+			</if>
+		</where>
+	</select>
+
+
+
+	<select id="selectCategoryCount" resultType="map">
+		select
+		IF(category.name IS NULL,'未知類別',category.name) AS name,count(info.id)
+		as total from tb_news_info info left join tb_news_category category
+		on category.id=info.category_id group by category.name
+	</select>
+
+
+
+</mapper>

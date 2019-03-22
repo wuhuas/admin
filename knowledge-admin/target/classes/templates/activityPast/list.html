@@ -1,0 +1,257 @@
+<style>
+.tpl-table-list-select {
+    text-align: left;
+    width: 470px;
+}
+#statusChange{
+	width:250px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">以往活動管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-lg-12">
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">標題：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="title" th:value="${title}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+								<div class="am-form-group">
+									<label class="am-fl"  style="margin-left:46px;">活動时间：</label>
+									<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								    	<div class="am-fl">
+								    		<input type="text"  id="activityFromTime" class="empty" style="width:150px;" name="activityFromTime" placeholder="yyyy-mm-dd"  readonly="readonly" th:value="${activityFromTime}"/>
+								    	</div>
+								    	<div class="am-fl" style="margin-left:10px;">
+								    		<span>至</span>
+								    	</div>
+								    	<div class="am-fl"  style="margin-left:10px;">
+								    		<input type="text"  id="activityToTime" class="empty" style="width:150px;" name="activityToTime" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${activityToTime}"/>
+										</div>
+									</div>
+								</div>
+						</div>
+					</div>
+
+					<div class="am-u-lg-12">
+						<div class="am-fl">
+							<div class="tpl-table-list-select"  id="statusChange">
+								<label>狀態：</label>
+								<select id="status" data-am-selected="{btnWidth: '150px'}"  class="am-fl ">
+									<option value="0">請選擇狀態</option>
+									<option value="1" th:selected="${status==1}">上架</option>
+									<option value="2" th:selected="${status==2}">下架</option>
+								</select>
+							</div>
+						</div> 
+						<div class="am-fl">
+							<div class="tpl-table-list-select"  id="statusChange">
+								<label>關聯活動：</label>
+								<select id="relation" data-am-selected="{searchBox: 1,btnWidth: '150px'}"  class="am-fl ">
+									<option  th:selected="${relation==0}" value="0">請選擇</option>
+									<option th:each="activity : ${activities}" th:value="${activity.id}" th:text="${activity.title}" th:selected="${relation}==${activity.id}"></option>
+								</select>
+							</div>
+						</div> 
+					</div>
+					
+					<div class="am-u-sm-12" style="padding-bottom:10px;margin-top: 10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 table-top-border">
+					</div>
+					
+					<div class="am-u-lg-12">
+						<div class="am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="activityPast:add" type="button" class="am-btn am-btn-default am-btn-success" onclick="loadPage('activityPast/form')">
+											<span class="am-icon-plus" ></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					
+						<table class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>標題</th>
+									<th>發佈人</th>
+									<th>活動時間</th>
+									<th>關聯活動</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index}+1"></td>
+									<td th:text="${record.title}"></td>
+									<td th:text="${record.releaseName}"></td>
+									<td>
+										<div class="am-fl"  th:text="${#dates.format(record.activityTime, 'yyyy-MM-dd')}"></div>
+										<div class="am-fl" th:if="${record.activityTimeEnd != null}">&nbsp;~&nbsp;</div>
+										<div class="am-fl" th:text="${#dates.format(record.activityTimeEnd, 'yyyy-MM-dd')}"></div>
+									</td>
+									<td>
+										<select th:if="${record.activityNames} eq null" th:id="${recordStat.index}+1">
+											<option>沒有關聯活動</option>
+										</select>
+										
+										<select th:if="${record.activityNames} != null" th:id="${recordStat.index}+1">
+											<!-- <option value="0">查看關聯活動</option> -->
+											<option th:each="activity : ${#strings.listSplit(record.activityNames,',')}" th:text="${activity}"></option>
+										</select>
+									</td>
+									<td class="am-text-middle">
+										<span th:if="${record.status == 1}" class='am-badge am-badge-success'>上架</span>
+										<span th:if="${record.status == 2}" class='am-badge am-badge-warning'>下架</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<!-- <a href="javascript:;" th:onclick="'javascript:loadPage(\'activityPast/'+${record.id}+'/select\');'"> <i class="am-icon-pencil"></i> 查看</a> --> 
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'activityPast/'+${record.id}+'/select\');'" shiro:hasPermission="activityPast:edit"> <i class="am-icon-pencil"></i> 編輯</a> 
+											<a href="javascript:;" th:if="${record.status==2}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="activityPast:shelf"><i class="am-icon-level-up"></i>上架</a>
+											<a href="javascript:;" th:if="${record.status==1}" th:onclick="'javascript:changeStatus('+${record.id}+',2);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="activityPast:shelf"><i class="am-icon-level-down"></i>下架</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+	         
+
+        
+		$("#activityFromTime").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#activityFromTime").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#activityToTime").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#activityToTime").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+	    
+		 
+	    
+	 	$('select').selected();
+		var params =['title','activityFromTime','activityToTime','status','relation'];
+	    initPage([[${page.pages}]],[[${page.current}]],'activityPast/listUI',params);		
+	    
+		function search(){
+			var title = $('#title').val();
+			var activityFromTime = $('#activityFromTime').val();
+			var activityToTime = $('#activityToTime').val();
+			var status = $('#status').val();
+			var relation = $('#relation').val();
+			loadPage('activityPast/listUI?title='+title+'&activityFromTime='+activityFromTime+'&activityToTime='+activityToTime+
+					'&status='+status+'&relation='+relation);
+		}
+		
+		
+		
+		
+		function changeStatus(id,status){
+			var context;
+			if (status == 1) {
+				context = '確認上架該以往活動吗？'
+			}else{
+				context = '確認下架該以往活動吗？'
+			}
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "activityPast/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('activityPast/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#title").val("");
+			$("#activityFromTime").removeAttr('value');
+			$("#activityToTime").removeAttr('value');
+			$("#status").val('0').trigger('changed.selected.amui');
+			$("#relation").val('0').trigger('changed.selected.amui');
+		}
+		]]>
+	</script>
+

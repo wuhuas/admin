@@ -1,0 +1,295 @@
+<style>
+.tpl-table-list-select {
+    text-align: left;
+    width: 470px;
+}
+#statusChange{
+	width:250px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">活動管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+
+					<div class="am-u-lg-12">
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<label class="am-fl">活動名稱：</label>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+							<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								<input type="text" class="am-form-field empty" style="width:100%;" placeholder="" id="name" th:value="${name}" />
+								<span class="am-input-group-btn"></span>
+							</div>
+						</div>
+						
+						
+						<div class="am-fl">
+								<div class="am-form-group">
+									<label class="am-fl"  style="margin-left:30px;">報名时间：</label>
+									<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+								    	<div class="am-fl">
+								    		<input type="text"  id="enrollFrom" class="empty" name="enrollFrom" placeholder="yyyy-mm-dd"  readonly="readonly" th:value="${enrollFrom}"/>
+								    	</div>
+								    	<div class="am-fl" style="margin-left:10px;">
+								    		<span>至</span>
+								    	</div>
+								    	<div class="am-fl"  style="margin-left:10px;">
+								    		<input type="text"  id="enrollTo" class="empty" name="enrollTo" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${enrollTo}"/>
+										</div>
+									</div>
+								</div>
+						</div>
+						
+
+						
+						
+					</div>
+					
+
+					<div class="am-u-lg-12">
+					
+						<div class="am-fl">
+							<div class="tpl-table-list-select"  id="statusChange">
+								<label>活動狀態：</label>
+								<select id="status" data-am-selected="{btnWidth: '150px'}"  class="am-fl ">
+									<option value="0">請選擇狀態</option>
+									<option value="1" th:selected="${status==1}">開放活動</option>
+									<option value="2" th:selected="${status==2}">關閉活動</option>
+								</select>
+							</div>
+						</div> 
+						
+						
+						<div class="am-fl">
+							<div class="am-form-group">
+								<div class="am-form-group tpl-table-list-select">
+									<label class="am-fl" style="margin-left:14px;" >活動时间：</label>
+									<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+										<div class="am-fl">	
+								    		<input type="text"  id="startFrom" class="empty" name="startFrom" placeholder="yyyy-mm-dd"  readonly="readonly" th:value="${startFrom}"/>
+								    	</div>
+								    	<div class="am-fl" style="margin-left:10px;">
+								    		<span>至</span>
+								    	</div>
+								    	<div class="am-fl"  style="margin-left:10px;">
+								    		<input type="text"  id="endTo" class="empty" name="endTo" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${endTo}"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						
+						<div class="am-fl" style="margin-left:-10px;">
+							<div class="am-form-group tpl-table-list-select am-fl" id="statusChange">
+								<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+								<button class="am-btn am-btn-primary am-btn-sm am-round" type="button" onclick="allEmpty()">清空</button>
+							</div>
+						</div>	
+						
+						
+					</div>
+					
+
+					
+					
+					
+					
+
+					<div class="am-u-lg-12">
+					
+					
+						<div class="am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="activity:add" type="button" class="am-btn am-btn-default am-btn-success" onclick="loadPage('newscategory/form')">
+											<span class="am-icon-plus" ></span> 新增活動
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					
+						<table class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>活動名稱</th>
+									<th>報名時間</th>
+									<th>活動時間</th>
+									<th>創建人</th>
+									<th>創建時間</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index}+1"></td>
+									<td th:text="${record.activityName}"></td>
+									<td>
+										<div class="am-fl" th:text="${#dates.format(record.enrollStartTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+										<div class="am-fl">至</div>
+										<div class="am-fl" th:text="${#dates.format(record.enrollEndTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+									</td>
+									<td>
+										<div class="am-fl"  th:text="${#dates.format(record.activityStartTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+										<div class="am-fl">至</div>
+										<div class="am-fl" th:text="${#dates.format(record.activityEndTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+									</td>
+									<td th:text="${record.createUser}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.status eq 1}" class='am-badge am-badge-success'>開放</span>
+										<span th:if="${record.status eq 2}" class='am-badge am-badge-warning'>關閉</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a style="width:60px;" href="javascript:;" th:onclick="'javascript:loadPage(\'newscategory/'+${record.id}+'/select\');'" shiro:hasPermission="activity:edit"> <i class="am-icon-pencil"></i> 編輯</a> 
+											<a style="width:70px;" href="javascript:;" th:if="${record.status==2}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="activity:shelf"><i></i>開放活动</a>
+											<a style="width:70px;" href="javascript:;" th:if="${record.status==1}" th:onclick="'javascript:changeStatus('+${record.id}+',2);'" class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="activity:shelf"><i></i>關閉活动</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+	         
+		$("#enrollFrom").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#enrollTo").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#enrollTo").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#enrollFrom").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+	    
+
+        
+		$("#startFrom").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#endTo").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#endTo").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#startFrom").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+	    
+		 
+	    
+	 	$('select').selected();
+		var params =['name','enrollFrom','enrollTo','startFrom','endTo','status'];
+	    initPage([[${page.pages}]],[[${page.current}]],'activity/listUI',params);		
+	    
+		function search(){
+			var name = $('#name').val();
+			var enrollFrom = $('#enrollFrom').val();
+			var enrollTo = $('#enrollTo').val();
+			var startFrom = $('#startFrom').val();
+			var endTo = $('#endTo').val();
+			var status = $('#status').val();
+			loadPage('activity/listUI?name='+name+'&enrollFrom='+enrollFrom+'&enrollTo='+enrollTo+
+					'&startFrom='+startFrom+'&endTo='+endTo+'&status='+status);
+		}
+		
+		
+		
+		
+		function changeStatus(id,status){
+			var context;
+			if (status == 1) {
+				context = '確認開放該活動吗？'
+			}else{
+				context = '確認關閉該活動吗？'
+			}
+			
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "activity/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('activity/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#name").val("");
+			$("#enrollFrom").removeAttr('value');
+			$("#enrollTo").removeAttr('value');
+			$("#startFrom").removeAttr('value');
+			$("#endTo").removeAttr('value');
+			$("#status").val(0).trigger('changed.selected.amui');
+		}
+		]]>
+	</script>
+

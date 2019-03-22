@@ -1,0 +1,43 @@
+#换行为两个空格
+server:
+  port: 8080
+  
+  
+#log config
+logging: 
+  config: classpath:log4j2.xml
+  level: 
+    root: DEBUG
+    org: 
+      springframework: 
+        web: ERROR
+        beans: ERROR
+        core: ERROR
+    springfox: ERROR
+
+#数据库配置
+spring:
+  datasource:
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://119.23.201.55:3307/wxshop?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true
+    username: root
+    password: Loogk12346
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:  
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      
+      
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.knowledge.common.business.**.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false

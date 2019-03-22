@@ -1,0 +1,166 @@
+package com.knowledge.api.business.periodical;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.auth0.jwt.JWT;
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.feilong.core.Validator;
+import com.knowledge.api.base.config.jwt.annotation.UserLoginToken;
+import com.knowledge.common.base.enums.EnumResult;
+import com.knowledge.common.base.index.BaseController;
+import com.knowledge.common.base.model.Pager;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.business.complimentary.entity.TbComplimentaryPeriodical;
+import com.knowledge.common.business.complimentary.service.impl.TbComplimentaryPeriodicalServiceImpl;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.member.service.ITbMemberService;
+import com.knowledge.common.business.periodical.entity.TbSelectedPeriodical;
+import com.knowledge.common.business.periodical.service.ITbSelectedPeriodicalService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * <p>
+ * 精选期刊  前端控制器
+ * </p>
+ *
+ * @author jide
+ * @since 2018-12-04
+ */
+@RestController
+@Api(value="精选期刊Controller",tags={"精选期刊操作接口"})
+public class TbSelectedPeriodicalController extends BaseController {
+
+	@Autowired
+	private ITbSelectedPeriodicalService periodicalService;
+	
+	@Autowired
+	private TbComplimentaryPeriodicalServiceImpl perServcie;
+	
+	@Autowired
+	private ITbMemberService memberService;
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/periodical/list")
+	@ApiOperation(value = "精选期刊列表",notes="精选期刊列表")
+    public Result listUI(@RequestBody Pager<TbSelectedPeriodical> param) {
+		Condition create = Condition.create();
+		Map<String, Object> map = param.getMap();
+		Page<TbSelectedPeriodical> page = null;
+		String state="";
+		Integer number=periodicalService.selectCount(create);
+		List<TbSelectedPeriodical> top6=periodicalService.selectTop();
+		periodicalService.updateState();
+		if(Validator.isNotNullOrEmpty(top6)) {
+		for(TbSelectedPeriodical top:top6) {
+			top.setState(1);
+			top.updateById();
+		}
+		}
+		map.put("count", number);
+	    String token=request.getHeader("token");
+		if(Validator.isNullOrEmpty(token)) {
+			map.put("auth", 1);
+			state="1";
+			number=number-6;
+			//page.setOrderByField("1");
+		}
+		if(Validator.isNotNullOrEmpty(token)) {
+		String	userId = JWT.decode(token).getAudience().get(0);
+			TbMember meber=memberService.selectById(userId);
+			if(Validator.isNotNullOrEmpty(meber)) {
+			if(Validator.isNotNullOrEmpty(meber.getReadDateStart())&&Validator.isNotNullOrEmpty(meber.getReadDateEnd()))
+			{
+			Long newDate=new Date().getTime();
+			Long startTime=meber.getReadDateStart().getTime();
+			Long endTime=meber.getReadDateEnd().getTime();
+			if(newDate<=startTime || newDate>=endTime) {
+				map.put("auth", 1);
+				state="1";
+				number=number-6;
+		    }
+			}
+			else {
+				map.put("auth", 1);
+				state="1";
+				number=number-6;
+			}
+			}
+		}
+		page=periodicalService.selectPageAll(param);
+		page.setOrderByField(state);
+		page.setTotal(number);
+		return json(page);
+    }
+	
+	@GetMapping("/periodical/getNewPeriodical")
+	@ApiOperation(value = "获取最新的一期精选期刊 ",notes="获取最新的一期精选期刊")
+    public Result getNewPeriodical() {
+		List<TbSelectedPeriodical> list = periodicalService.selectList(Condition.create().orderBy("periods_number",false));
+		if(Validator.isNotNullOrEmpty(list)) {
+			return json(list.get(0));
+		}
+		return error();
+    }
+	
+	@GetMapping("/periodical/getPeriodicalInfo")
+	@ApiOperation(value = "精选期刊详情信息 ",notes="精选期刊详情信息")
+    public Result getNewsInfo(@RequestParam Integer id) {
+		TbSelectedPeriodical list = periodicalService.selectById(id);
+		return json(list);
+    }
+	
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/periodical/complimentarylist")
+	@ApiOperation(value = "赠阅期刊列表",notes="赠阅期刊列表")
+    public Result list(@RequestBody Pager<TbComplimentaryPeriodical> param) {
+		Condition create = Condition.create();
+		Map<String, Object> map = param.getMap();
+		create.eq("status",1);
+		create.orderBy("periodsNumber", false);
+		Page<TbComplimentaryPeriodical> list = perServcie.selectPage(param.getPagePlus(),create);
+		return json(list);
+    }
+	
+	@GetMapping("/periodical/getPeriodical")
+	@ApiOperation(value = "赠阅期刊查询详情信息",notes="赠阅期刊查询详情信息")
+	@UserLoginToken
+    public Result getPeriodical(@RequestParam Integer id) {
+		TbMember meber=getMemberInfo();
+		if(Validator.isNotNullOrEmpty(meber)) {
+			if(Validator.isNullOrEmpty(meber.getPeriodicalDateStart())||Validator.isNullOrEmpty(meber.getPeriodicalDateEnd())) {
+				return fail(EnumResult.ERROR_UNAUTHORIZED);
+			}
+			Long newDate=new Date().getTime();
+			Long startTime=meber.getPeriodicalDateStart().getTime();
+			Long endTime=meber.getPeriodicalDateEnd().getTime();
+			if(newDate>=startTime && newDate<=endTime) {
+				TbComplimentaryPeriodical list = perServcie.selectById(id);
+				list.setReadingVolume(list.getReadingVolume()+1);
+				list.updateById();
+				
+				return json(list);
+			}
+			else {
+				return fail(EnumResult.ERROR_UNAUTHORIZED);
+			}
+		}
+		return error();
+		
+    }
+	
+	
+	
+}

@@ -1,0 +1,138 @@
+package com.knowledge.common.business.member.service.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.feilong.core.Validator;
+import com.knowledge.common.base.config.token.TokenService;
+import com.knowledge.common.base.email.async.SendEmailAsync;
+import com.knowledge.common.base.enums.EnumResult;
+import com.knowledge.common.base.model.ReportVo;
+import com.knowledge.common.base.util.DateUtil;
+import com.knowledge.common.base.util.MD5Util;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.member.mapper.TbMemberDao;
+import com.knowledge.common.business.member.service.ITbMemberService;
+import com.knowledge.common.business.notice.entity.TbNotice;
+import com.knowledge.common.business.notice.service.ITbNoticeService;
+
+/**
+ * <p>
+ * 用户信息管理 服务实现类
+ * </p>
+ *
+ * @author francis
+ * @since 2018-11-30
+ */
+@Service
+public class TbMemberServiceImpl extends ServiceImpl<TbMemberDao, TbMember> implements ITbMemberService {
+
+	
+	private static Logger logger = LogManager.getLogger(TbMemberServiceImpl.class);
+	@Autowired
+	private TokenService tokenService;
+	@Autowired
+	private SendEmailAsync  sendEmail;
+	
+	@Autowired
+	private ITbNoticeService noticeService;
+	
+	@Autowired
+	private TbMemberDao memberDao;
+	
+	@Override
+	public boolean insertUser(TbMember user) {
+	
+		String password=MD5Util.md5(user.getPassword());
+		user.setPassword(password);
+		user.setRegisterTime(new Date());
+		user.setActiveTime(new Date());
+		user.setActiveCode(MD5Util.getRandomChar(80));
+		if(Validator.isNotNullOrEmpty(user.getSubEmail())) {
+			user.setSubTime(new Date());
+		}
+		if(!user.insert()) {
+			return false;
+		} 
+		sendEmail.sendEmail(user, 1);
+		TbNotice notice=new TbNotice();
+		notice.setTitle("系統消息");
+		notice.setContent("您好"+user.getNickname()+",歡迎註冊紫荊知識網");
+		notice.setCreateTime(new Date());
+		notice.setStatus(2);
+		notice.setToMemId(user.getId());
+		noticeService.insert(notice);
+		return true;
+	}
+
+	@Override
+	public String login(TbMember member) {
+		String token=tokenService.getToken(member);
+		return token;
+	}
+
+	@Override
+	public boolean checkTimeOut(TbMember member) {
+		Long subTime = DateUtil.subtractTime(new Date(), member.getActiveTime());
+		if (subTime >= 30) {
+			return false;
+		}
+		member.setActiveState(1);
+		member.updateById();
+		return true;
+	}
+
+	@Override
+	public boolean forgetPass(TbMember user) {
+		
+		user.setActiveCode(MD5Util.getRandomChar(80));
+		user.setActiveTime(new Date());
+		user.updateById();
+		sendEmail.sendEmail(user, 2);
+		return true;
+	}
+
+	@Override
+	public boolean checkPassTimeOut(TbMember member) {
+		Long subTime = DateUtil.subtractTime(new Date(), member.getActiveTime());
+		if (subTime >= 30) {
+			return false;
+		}
+		return false;
+	}
+
+	@Override
+	public List<ReportVo> selectCountByDate(String time) {
+		return memberDao.selectCountByDate(time);
+	}
+
+	@Override
+	public List<ReportVo> selectSubCountByDate(String time) {
+		return memberDao.selectSubCountByDate(time);
+	}
+
+	@Override
+	public void sendMail(TbMember member, Integer type) {
+		member.setActiveTime(new Date());
+		member.setActiveCode(MD5Util.getRandomChar(80));
+		if(type==1) {
+			member.updateById();
+			sendEmail.sendEmail(member, 1);
+		}
+		if(type==2) {
+			member.updateById();
+			sendEmail.sendEmail(member, 2);
+		}
+	}
+
+	
+	
+}

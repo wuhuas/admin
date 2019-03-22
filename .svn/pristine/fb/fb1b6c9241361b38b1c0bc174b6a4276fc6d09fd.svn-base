@@ -1,0 +1,304 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+}
+.fabu{
+	width: 16%;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+}
+
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">雜誌訂單管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								姓名：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="姓名" id="name" th:value="${name}" />
+								</div>
+							</div>
+						</div>
+	
+						<input type="hidden" id="sort" name="sort" th:value="${sort}"/>
+						<input type="hidden" id="isAsc" name="isAsc" th:value="${isAsc}"/>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								學校：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="標題名稱" id="school" th:value="${school}" />
+								</div>
+							</div>
+						</div>
+	
+						<div class="am-u-sm-12 am-u-lg-6">
+							<label class="label-weight am-left fabu">預定時間： </label>
+							<div classs="am-left">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								聯絡電話：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="聯絡電話" id="phone" th:value="${phone}" />
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								Email：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field empty" placeholder="Email" id="email" th:value="${email}" />
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="am-u-sm-4 label-weight">
+								狀態：
+							</div>
+							<div class="tpl-table-list-select">
+								<div>
+									<select id="status" class="selectReset" data-am-selected="{btnWidth: '150px'}"> 
+										<option value="0">請選擇</option>
+										<option value="1" th:selected="${status} eq 1">已確認</option>
+										<option value="2" th:selected="${status} eq 2">未確認</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="am-u-sm-4 label-weight">
+								類型：
+							</div>
+							<div class="tpl-table-list-select">
+								<div>
+									<select id="type" class="selectReset" data-am-selected="{btnWidth: '150px'}"> 
+										<option value="0">請選擇</option>
+										<option value="1" th:selected="${type} eq 1">訂閱</option>
+										<option value="2" th:selected="${type} eq 2">贈閱</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="magazineOrder:excel" type="button" class="am-btn am-btn-warning"
+											onclick="javascript:window.location.href='magazineorder/export';">
+											<span class="am-icon-download"></span> 導出
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>姓名</th>
+									<th>學校</th>
+									<th>年班</th>
+									<th>Email</th>
+									<th>聯絡電話</th>
+									<th>訂閱年限</th>
+									<th>預定時間<div id="click-sort"><div id="sort-asc" onclick="sortAsc('reserve_time');" th:style="${(sort eq 'reserve_time' && isAsc eq 'true') ? 'color:#666565' : ''}"><i class="am-icon-sort-asc" ></i></div><div  id="sort-desc" onclick="sortDesc('reserve_time');" th:style="${(sort eq 'reserve_time' && isAsc eq 'false') ? 'color:#666565' : ''}"><i class="am-icon-sort-desc"></i></div></div></th>
+									<th>狀態</th>
+									<th>類型</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${record.name}"></td>
+									<td th:text="${record.school}"></td>
+									<td th:text="${record.grade}"></td>
+									<td th:text="${record.email}"></td>
+									<td th:text="${record.phone}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.type == 1}" th:text="${record.subscribeYear+'年'}"></span>
+										<span th:if="${record.type == 2}"></span>
+										<!-- <span th:if="${record.subscribeYear == 0}" th:text="${#dates.format(record.startTime, 'yyyy-MM')+' ~ '+#dates.format(record.endTime, 'yyyy-MM')}"></span> -->
+									</td>
+									<td th:text="${#dates.format(record.reserveTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.status == 1}" class='am-badge am-badge-success'>已確認</span>
+										<span th:if="${record.status == 2}" class='am-badge am-badge-warning'>未確認</span>
+										<span th:if="${record.status == 3}" class='am-badge am-badge-info'>已拒絕</span>
+									</td>
+									<td class="am-text-middle">
+										<span th:if="${record.type == 1}" class='am-badge am-badge-success' style="border-radius: 8px;">訂閱</span>
+										<span th:if="${record.type == 2}" class='am-badge am-badge-warning' style="border-radius: 8px;">贈閱</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'magazineorder/'+${record.id}+'/select\');'" shiro:hasPermission="magazineOrder:view"> <i class="am-icon-eye"></i> 查看</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+	 	function params(sort,isAsc) {
+	 		var name = $('#name').val();
+			var school = $('#school').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			var phone = $('#phone').val();
+			var email = $('#email').val();
+			var status = $('#status').val();
+			var type = $('#type').val();
+			
+			if($("#sort").val()!=null && sort==null){
+				sort=$("#sort").val();
+			}
+			
+			if($("#isAsc").val()!=null && isAsc==null){
+				isAsc=$("#isAsc").val();
+			}
+			
+			
+			var jsonParam = {
+				"name":name,
+				"school":school,
+				"phone":phone,
+				"from":from,
+				"to":to,
+				"email":email,
+				"type":type,
+				"status":status,
+				"sort":sort,
+				"isAsc":isAsc
+			}
+			return jsonParam;
+		}
+	 	
+		initPageToJson([[${page.pages}]],[[${page.current}]],'magazineorder/listUI',params());		
+	    
+		function search(){
+			loadPageToJson('magazineorder/listUI',params());
+		}
+		
+		function allEmpty() {
+			$("#name").val('');
+			$("#school").val('');
+			
+			$("#sort").val('id');
+			$("#isAsc").val('false');
+			
+			$(".empty").removeAttr('value');
+			$(".selectReset").val(0).trigger('changed.selected.amui');
+		}
+		
+		
+
+		function sortAsc(clum) {
+			$("#sort-desc").css("color","#c0bfbf");
+			$("#sort-asc").css("color","#666565");
+			loadPageToJson('magazineorder/listUI',params(clum,true));
+			console.log(params(clum,true))
+		}
+		
+		function sortDesc(clum) {
+			$("#sort-desc").css("color","#666565");
+			$("#sort-asc").css("color","#c0bfbf");
+			loadPageToJson('magazineorder/listUI',params(clum,false));
+			console.log(params(clum,false))
+		}
+		
+		
+		
+		]]>
+	</script>
+

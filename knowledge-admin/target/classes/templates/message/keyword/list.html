@@ -1,0 +1,251 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	padding-right: 3% !important;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">關鍵字管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								關鍵詞：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field" placeholder="關鍵詞" id="keyword" th:value="${keyword}" />
+								</div>
+							</div>
+						</div>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								狀態：
+							</div>
+							<div class="tpl-table-list-select" id="statusChange">
+								<div>
+									<select id="status" class="selectReset" data-am-selected="{btnWidth: '150px'}"> 
+										<option value="0">請選擇狀態</option>
+										<option value="1" th:selected="${status} eq 1">上架</option>
+										<option value="2" th:selected="${status} eq 2">下架</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-6">
+							<label class="label-weight am-left">創建时间： </label>
+							<div classs="tpl-form-border-form">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="messagekeyword:add" type="button"
+											class="am-btn am-btn-default am-btn-success"
+											onclick="loadPage('messagekeyword/form')">
+											<span class="am-icon-plus"></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>關鍵詞</th>
+									<th>創建時間</th>
+									<th>創建人</th>
+									<th>修改時間</th>
+									<th>修改人</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index+1}"></td>
+									<td th:text="${record.keyword}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${record.createUser}"></td>
+									<td th:text="${#dates.format(record.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${record.updateUser}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.status == 1}" class='am-badge am-badge-success'>上架</span>
+										<span th:if="${record.status == 2}" class='am-badge am-badge-warning'>下架</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'messagekeyword/'+${record.id}+'/select\');'" shiro:hasPermission="messagekeyword:edit"> <i class="am-icon-pencil"></i> 編輯</a>
+											<a href="javascript:;" class="tpl-table-black-operation-warning warning-btn" th:onclick="'javascript:del(\'messagekeyword/'+${record.id}+'/delete\',\'messagekeywordkeyword/listUI\');'" shiro:hasPermission="messagekeyword:delete"> <i class="am-icon-trash"></i> 删除</a>
+											<a href="javascript:;" th:if="${record.status==2}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'"
+												class="tpl-table-black-operation-warning warning-btn"
+												shiro:hasPermission="messagekeyword:shelf"><i
+												class="am-icon-level-up"></i>上架</a> <a href="javascript:;"
+												th:if="${record.status==1}"
+												th:onclick="'javascript:changeStatus('+${record.id}+',2);'"
+												class="tpl-table-black-operation-warning warning-btn"
+												shiro:hasPermission="messagekeyword:shelf"><i
+												class="am-icon-level-down"></i>下架</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+	 	
+	 	function params() {
+	 		var keyword = $('#keyword').val();
+			var status = $('#status').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			var jsonParam = {
+				"keyword":keyword,
+				"status":status,
+				"from":from,
+				"to":to
+			}
+			return jsonParam;
+	 	}
+	 	
+	 	
+		initPageToJson([[${page.pages}]],[[${page.current}]],'messagekeyword/listUI',params());
+	    
+		function search(){
+			loadPageToJson('messagekeyword/listUI',params());
+		}
+		
+		function changeStatus(id,status){
+			var context;
+			if (status == 1) {
+				context = '确认上架该關鍵詞吗？'
+			}else{
+				context = '确认下架该關鍵詞吗？'
+			}
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "messagekeyword/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('messagekeyword/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#status").val(0).trigger('changed.selected.amui');
+			$("#keyword").val('');
+			$(".empty").removeAttr('value');
+		}
+		]]>
+	</script>
+

@@ -1,0 +1,138 @@
+package com.knowledge.common.base.email.async;
+
+import java.util.List;
+
+import javax.mail.MessagingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import com.feilong.core.Validator;
+import com.knowledge.common.base.email.service.IMailService;
+import com.knowledge.common.business.member.entity.TbMember;
+import com.knowledge.common.business.periodical.entity.TbSelectedPeriodical;
+
+@Component
+public class SendEmailAsync {
+	private static Logger log = LoggerFactory.getLogger(SendEmailAsync.class);
+	@Autowired
+	private IMailService mailService;
+
+	@Autowired
+	private TemplateEngine templateEngine;
+
+	
+	
+	/**
+	 * 杂志订单管理 
+	 * 审核通过/失败  发送邮件通知
+	 * @param email 发送邮箱
+	 * @param status true=审核通过   false=审核失败
+	 */
+	@Async
+	public void sendMagazineStatusByEmail(String email,Boolean status){
+		
+		try {
+			if(status==true){
+				mailService.sendHtmlMail(email, "雜誌訂單狀態", "雜誌訂閱成功");
+			}else{
+				mailService.sendHtmlMail(email, "雜誌訂單狀態", "雜誌訂閱失敗");
+			}
+
+			
+		} catch (MessagingException e) {
+			
+			log.error("雜誌訂單狀態发送失败： {}" + e.getMessage());
+
+			
+		}
+		
+	}
+	
+	
+	
+	/*
+	 * @SuppressWarnings("unused") private static String changeEncode(String str) {
+	 * try { str = new String(str.getBytes("ISO-8859-1"), "UTF-8"); // "B"代表Base64 }
+	 * catch (UnsupportedEncodingException e) { log.error(e.getMessage()); } return
+	 * str; }
+	 */
+
+	@Async()
+	public void sendEmail(TbMember member, Integer type) {
+		String hostName = member.getHostName();
+		String code = member.getActiveCode();
+		String email = member.getEmail();
+		String name = member.getNickname();
+		Context context = new Context();
+		switch (type) {
+		case 1:
+			// 注册发动邮件
+			context.setVariable("nickName", name);
+			context.setVariable("url", hostName+"#/login?code="+code);
+			String emailContent = templateEngine.process("emailActive", context);
+			try {
+				mailService.sendHtmlMail(email, "電子郵箱驗證", emailContent);
+			} catch (MessagingException e) {
+				log.error("電子郵箱驗證发送失败： {}" + e.getMessage());
+			}
+			break;
+		case 2:
+			// 密码修改发送邮件
+			context.setVariable("nickName", name);
+			context.setVariable("url", hostName+"#/forgetPsw?code="+code);
+			context.setVariable("homeUrl", hostName+"#/home");
+			String emailupdate = templateEngine.process("emailForgetPow", context);
+			try {
+				mailService.sendHtmlMail(email, "電子郵箱驗證", emailupdate);
+			} catch (MessagingException e) {
+				log.error("密码修邮件发送失败： {} " + e.getMessage());
+			}
+			break;
+		case 3:
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 訂閱電子雜誌的郵件發送
+	 */
+	@Async
+	public void sendEleMagazine(TbSelectedPeriodical selectedperiodical,String coverUrl,List<TbMember> members) {
+		log.debug(">>>>>>>>>>>>>>>>>>進入：發送郵件異步");
+		String releaseMonth = selectedperiodical.getReleaseMonth();
+		String nextMonth = "";
+		if (Validator.isNotNullOrEmpty(releaseMonth)) {
+			String[] split = releaseMonth.split("-");
+			releaseMonth = split[0] + "年" + split[1] + "月";
+			nextMonth  = split[0] + "年" + (Integer.parseInt(split[1])+1) + "月";
+		}
+		Context context = new Context();
+		context.setVariable("coverUrl", coverUrl);
+		context.setVariable("releaseMonth", releaseMonth);
+		context.setVariable("nextMonth", nextMonth);
+		context.setVariable("url", "https://www.upknowledge.com.hk/#/perDetail?id="+selectedperiodical.getId());
+		context.setVariable("unsubUrl", "http://knowledge.loogk.com/#/perDetail?id="+selectedperiodical.getId());
+		for (TbMember member : members) {
+			context.setVariable("nickName", member.getNickname());
+			String emailupdate = templateEngine.process("emailActive", context);
+			try {
+				mailService.sendHtmlMail(member.getSubEmail(), "最新一期香港《知識》雜誌電子版上線啦！", emailupdate);
+				log.debug("SUCCESS:-------------> 電子雜誌邮件发送成功!! 郵箱：{}",member.getSubEmail());
+			} catch (MessagingException e) {
+				log.debug("ERROR:----------> 電子雜誌邮件发送失败!! 郵箱：{},错误信息：{} ", member.getSubEmail(),e.getMessage());
+			}
+		}
+		log.debug(">>>>>>>>>>>>>>>>>>結束：發送郵件異步");
+	}
+	
+	
+	
+}

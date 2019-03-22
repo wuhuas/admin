@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 日志级别 trace： 是追踪，就是程序推进以下，你就可以写个trace输出，所以trace应该会特别多，不过没关系，我们可以设置最低日志级别不让他输出。 
+	debug： 调试么，我一般就只用这个作为最低级别，trace压根不用。是在没办法就用eclipse或者idea的debug功能就好了么。 info： 
+	输出一下你感兴趣的或者重要的信息，这个用的最多了。 warn： 有些信息不是错误信息，但是也要给程序员的一些提示，类似于eclipse中代码的验证不是有error 
+	和warn（不算错误但是也请注意，比如以下depressed的方法）。 error： 错误信息。用的也比较多。 fatal： 级别比较高了。重大错误，这种级别你可以直接停止程序了，是不应该出现的错误么！不用那么紧张，其实就是一个程度的问题。 -->
+<Configuration status="OFF">
+	<!-- 定义日志存放目录 -->
+	<properties>
+		<property name="logPath">logs</property>
+	</properties>
+	<!--先定义所有的appender(输出器) -->
+	<Appenders>
+		<!--输出到控制台 -->
+		<Console name="ConsoleLog" target="SYSTEM_OUT">
+			<!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+			<ThresholdFilter level="trace" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<!--输出日志的格式 -->
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS}{GMT+8} [%t] %-5level %logger{36}:%L - %msg%n" />
+			<!-- <PatternLayout pattern="%-d [%t] %-5p %c{1}:%L - %m%n" /> -->
+		</Console>
+		<!--输出到文件 -->
+		<File name="FileLog" fileName="${logPath}/error.log">
+			<ThresholdFilter level="error" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z}{GMT+8} %-5level %class{36} %L %M - %msg%xEx%n" />
+		</File>
+		<!--输出到循环日志，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+		<RollingFile name="RollingFileLog" fileName="${logPath}/app.log"
+			filePattern="${logPath}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<ThresholdFilter level="trace" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z}{GMT+8} %-5level %class{36} %L %M - %msg%xEx%n" />
+			<SizeBasedTriggeringPolicy size="10MB" />
+		</RollingFile>
+	</Appenders>
+	<!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+	<Loggers>
+		<!--建立一个默认的root的logger，记录大于level高于TRACE的信息，如果这里的level高于Appenders中的，则Appenders中也是以此等级为起点，比如，这里level="fatal"，则Appenders中只出现fatal信息 -->
+		<Root level="ERROR">
+			<!-- 输出器,可选上面定义的任何项组合，或全选，做到可随意定制 -->
+			<AppenderRef ref="ConsoleLog" />
+			<AppenderRef ref="FileLog" />
+			<AppenderRef ref="RollingFileLog" /> 
+		</Root>
+		<logger name="org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor" level="INFO"/>
+	</Loggers>
+	
+</Configuration>

@@ -1,0 +1,120 @@
+package com.knowledge.admin.business.activity.web;
+
+import java.util.Date;
+import java.util.Map;
+import org.springframework.stereotype.Controller;
+import com.knowledge.admin.base.login.BaseAdminController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.feilong.core.Validator;
+import com.knowledge.common.base.model.Result;
+import com.knowledge.common.business.activity.service.ITbActivityManageService;
+import com.knowledge.common.business.news.entity.TbNewsCategory;
+import com.knowledge.common.business.news.entity.TbNewsInfo;
+import com.knowledge.common.business.activity.entity.TbActivityManage;
+
+/**
+ * <p>
+ * 活动管理  前端控制器
+ * </p>
+ *
+ * @author xiong
+ * @since 2018-11-14
+ */
+@Controller
+@RequestMapping("/activity/")
+
+public class TbActivityManageController extends BaseAdminController {
+
+	@Autowired
+	private ITbActivityManageService activityService;
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping("listUI")
+	/**
+	 * 獲取列表
+	 * @param map
+	 * @param page
+	 * @param name
+	 * @param enrollFrom
+	 * @param enrollTo
+	 * @param startFrom
+	 * @param endTo
+	 * @param status
+	 * @return
+	 */
+    public String listUI(Map<String,Object> map, Integer page, String name, String enrollFrom ,String enrollTo,
+    		String startFrom ,String endTo,Integer status) {
+		
+		//條件查詢構造器
+		Condition create = Condition.create();
+		
+		//按照名字搜索
+		if (Validator.isNotNullOrEmpty(name)) {
+			create.like("activity_name", name);
+		}
+		
+		//指定時間範圍內    報名時間
+		if (Validator.isNotNullOrEmpty(enrollFrom) && Validator.isNotNullOrEmpty(enrollTo)) {
+			create.between("DATE_FORMAT(enroll_start_time, '%Y-%m-%d')", enrollFrom, enrollTo);
+			//create.between("DATE_FORMAT(enroll_end_time, '%Y-%m-%d')", enrollFrom, enrollTo);
+		}
+		
+		//指定時間範圍內    活動時間
+		if (Validator.isNotNullOrEmpty(startFrom) && Validator.isNotNullOrEmpty(endTo)) {
+			create.between("DATE_FORMAT(activity_start_time, '%Y-%m-%d')", startFrom, endTo);
+			//create.between("DATE_FORMAT(activity_end_time, '%Y-%m-%d')", startFrom, endTo);
+		}
+		
+		//狀態
+		if (Validator.isNotNullOrEmpty(status) && status != 0) {
+			create.andNew("status = "+status);
+		}
+		
+		//排序
+		create.orderBy("create_time", false);
+		
+		Page<TbActivityManage> list = activityService.selectPage(new Page<TbActivityManage>(null==page?0:page, 10), create);
+		
+		map.put("page", list);
+		map.put("name", name);
+		map.put("enrollFrom", enrollFrom);
+		map.put("enrollTo", enrollTo);
+		map.put("startFrom", startFrom);
+		map.put("endTo", endTo);
+		map.put("status", status);
+		return "activity/list";
+    }
+	
+	
+	@RequestMapping(value="changeStatus/{id}/{status}",method=RequestMethod.GET)
+	@ResponseBody
+	/**
+	 * 獲取狀態
+	 * @param id
+	 * @param status
+	 * @return
+	 */
+	public Result changeStatus(@PathVariable("id") Integer id,@PathVariable("status") Integer status) {
+		TbActivityManage activityManage = activityService.selectById(id);
+		activityManage.setStatus(status);
+		activityManage.setUpdateTime(new Date());
+		//還差修改用戶名
+		//activityManage.setUpdateUser(updateUser);
+		if(activityManage.updateById()) {
+			return success();
+		}else {
+			return error();
+		}
+	}
+	
+
+}
+

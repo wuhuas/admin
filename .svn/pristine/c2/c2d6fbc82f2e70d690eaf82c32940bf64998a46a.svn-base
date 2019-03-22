@@ -1,0 +1,350 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	padding-right: 3% !important;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+#statistics-all{
+	height: 150px;
+	width: 100%;
+	display: flex;
+	text-align: center;
+	color: black;
+	border-bottom: 1px solid;
+}
+#userTotal,#subTotal{
+	width: 28%;
+}
+#messageTotal,#draftTotal{
+	width: 20%;
+}
+.total-num{
+	font-weight: bold;
+	font-size: 64px;
+}
+.border-right{
+	border-right: 5px solid;
+}
+.partition{
+	width: 1px;
+    height: 45px;
+    display: inline-block;
+    background-color: #b0adad;
+    margin-bottom: 44px;
+}
+
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="tpl-table-list-select">
+								<select id="year" class="selectReset" data-am-selected="{btnWidth: '100px'}"> 
+									
+								</select>
+								<select id="month" class="selectReset" data-am-selected="{btnWidth: '100px'}"> 
+									<option value="1" th:selected="${month eq '1'}">1月</option>
+									<option value="2" th:selected="${month eq '2'}">2月</option>
+									<option value="3" th:selected="${month eq '3'}">3月</option>
+									<option value="4" th:selected="${month eq '4'}">4月</option>
+									<option value="5" th:selected="${month eq '5'}">5月</option>
+									<option value="6" th:selected="${month eq '6'}">6月</option>
+									<option value="7" th:selected="${month eq '7'}">7月</option>
+									<option value="8" th:selected="${month eq '8'}">8月</option>
+									<option value="9" th:selected="${month eq '9'}">9月</option>
+									<option value="10" th:selected="${month eq '10'}">10月</option>
+									<option value="11" th:selected="${month eq '11'}">11月</option>
+									<option value="12" th:selected="${month eq '12'}">12月</option>
+								</select>
+								<input type="hidden" th:value="${month}"/>
+							</div>
+				</div>
+				<div class="widget-body  am-fr">
+						<div>
+							<div id= "statistics-all">
+								<div id="userTotal">
+									<div style="display: inline-block;width: 40%;color: #F277A2;">
+										<div th:text = "${newUserTotal}" class = "total-num"></div>
+										<div>新增用戶</div>
+									</div>
+									<div class="partition"></div>
+									<div style="display: inline-block;width: 40%;color: #7DC6F4;" >
+										<div th:text = "${userTotal}" class = "total-num user-total"></div>
+										<div>總用戶</div>
+									</div>
+								</div>
+								<div id="subTotal">
+									<div style="display: inline-block;width: 40%;color: #5FD9A4;">
+										<div th:text = "${newSubTotal}" class = "total-num"></div>
+										<div>新增電子訂閱</div>
+									</div>
+									<div class="partition"></div>
+									<div style="display: inline-block;width: 40%;color: #FF8402;">
+										<div th:text = "${subTotal}" class = "total-num sub-total"></div>
+										<div>總電子訂閱</div>
+									</div>
+								</div>
+								<div id="draftTotal" style="color: #AE78F3;">
+									<div th:text = "${newDraftTotal}" class = "total-num"></div>
+									<div>新增稿件</div>
+								</div>
+								<div id="messageTotal" style="color: #5FD9A4;">
+									<div th:text = "${messageTotal}" class = "total-num"></div>
+									<div>留言量</div>
+								</div>
+							</div>
+						</div>
+						<div style="margin-top: 35px;">
+							<div id="userChart" style="width: 50%;height:400px;    float: left;">
+							 	<h2>用戶量</h2>
+							</div>
+						  	<div id="magazineChart" style="width: 50%;height:400px;    float: right;">
+						  		<h2>電子訂閱</h2>
+						  	</div>
+						</div>
+					</div>
+					<div style="border-bottom:1px solid;">
+						<h1>浏览量Top10</h1>
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th>标题名称</th>
+									<th>资讯类别</th>
+									<th>来源/作者</th>
+									<th>浏览量</th>
+									<th>发布时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${browseTop10}">
+									<td th:text="${recordStat.index+1}"></td>
+									<td th:text="${record.title}"></td>
+									<td th:text="${record.categoryName}"></td>
+									<td th:text="${record.author}"></td>
+									<td th:text="${record.browseTotal}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div style="margin-top: 20px;">
+						<h1>留言Top5</h1>
+						<table width="100%"
+								class="am-table am-table-compact am-table-striped tpl-table-black "
+								id="example-r">
+								<thead>
+									<tr>
+										<th>序號</th>
+										<th>标题名称</th>
+										<th>资讯类别</th>
+										<th>来源/作者</th>
+										<th>留言量</th>
+										<th>发布时间</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="gradeX" th:each="record,recordStat:${commentTop5}">
+										<td th:text="${recordStat.index+1}"></td>
+										<td th:text="${record.title}"></td>
+										<td th:text="${record.categoryName}"></td>
+										<td th:text="${record.author}"></td>
+										<td th:text="${record.commentTotal}"></td>
+										<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					
+					
+					
+					<div style="margin-top: 20px;" class="widget">
+						<h1>類別資訊總數量</h1>
+						<table width="100%"
+								class="am-table am-table-compact am-table-striped tpl-table-black "
+								id="example-r">
+								<thead>
+									<tr>
+										<th>序號</th>
+										<th>資訊類別</th>
+										<th>資訊總數</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="gradeX" th:each="categoryCount,recordStat:${categoryCount}">
+										<td th:text="${recordStat.index+1}"></td>
+										<td th:text="${categoryCount.name}"></td>
+										<td th:text="${categoryCount.total}"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="static/ui/js/echarts.min.js"></script>
+<script th:inline="javascript">
+	<![CDATA[
+
+	 	$('select').selected();
+	    
+		var yearNow = new Date().getFullYear();
+		var yearSel = [[${year}]];
+		console.log(yearSel);
+	    for (var i = yearNow; i >= 2015; i--) {
+	    	if(yearSel == null){
+	    		yearSel = yearNow
+	    	}
+		 	var sed = yearSel==i?"selected":"";
+			var yearStr = "<option value=\"" + i + "\" " + sed+">"+i+"年</option>";
+	        $("#year").append(yearStr);
+	    }
+		
+	    var userReport = [[${userReport}]];
+	    var userAxisData =[];
+	    var userSeriesData =[];
+	    $.each(userReport, function(index, obj) {
+	    	userAxisData.push(obj.date);
+	    	userSeriesData.push(obj.total);
+	    });
+	    
+	    var subAxisData =[];
+	    var subSeriesData =[];
+	    $.each([[${subReport}]], function(index, obj) {
+	    	subAxisData.push(obj.date);
+	    	subSeriesData.push(obj.total);
+	    });
+	    
+	 // 初始化图表标签
+	    var userChart = echarts.init(document.getElementById('userChart'));
+	    var magazineChart = echarts.init(document.getElementById('magazineChart'));
+	    var userOption = {
+	    	    tooltip : {
+	    	        trigger: 'axis'
+	    	    },
+	    	    legend: {
+	    	        data:['用戶量']
+	    	    },
+	    	    toolbox: {
+	    	        show : true,
+	    	        feature : {
+	    	            mark : {show: true},
+	    	            dataView : {show: true, readOnly: false},
+	    	            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+	    	            restore : {show: true},
+	    	            saveAsImage : {show: true}
+	    	        }
+	    	    },
+	    	    calculable : true,
+	    	    xAxis : [
+	    	        {
+	    	            type : 'category',
+	    	            boundaryGap : false,
+	    	            data : userAxisData
+	    	        }
+	    	    ],
+	    	    yAxis : [
+	    	        {
+	    	            type : 'value'
+	    	        }
+	    	    ],
+	    	    series : [
+	    	        {
+	    	            name:'用戶量',
+	    	            type:'line',
+	    	            stack: '总量',
+	    	            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+	    	            data:userSeriesData
+	    	        }
+	    	    ]
+	    	};
+	    var magazineOption = {
+	    	    tooltip : {
+	    	        trigger: 'axis'
+	    	    },
+	    	    legend: {
+	    	        data:['電子訂閱']
+	    	    },
+	    	    toolbox: {
+	    	        show : true,
+	    	        feature : {
+	    	            mark : {show: true},
+	    	            dataView : {show: true, readOnly: false},
+	    	            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+	    	            restore : {show: true},
+	    	            saveAsImage : {show: true}
+	    	        }
+	    	    },
+	    	    calculable : true,
+	    	    xAxis : [
+	    	        {
+	    	            type : 'category',
+	    	            boundaryGap : false,
+	    	            data : subAxisData
+	    	        }
+	    	    ],
+	    	    yAxis : [
+	    	        {
+	    	            type : 'value'
+	    	        }
+	    	    ],
+	    	    series : [
+	    	        {
+	    	            name:'電子訂閱',
+	    	            type:'line',
+	    	            stack: '总量',
+	    	            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+	    	            data:subSeriesData
+	    	        }
+	    	    ]
+	    	};
+	    userChart.setOption(userOption);
+	    magazineChart.setOption(magazineOption);
+	    
+	    $("#month").change(function () {
+			var year = $('#year').val();
+			var month = $('#month').val();
+			loadPage('report/reportData?year='+year+'&month='+month);
+		})
+		$("#year").change(function () {
+			var year = $('#year').val();
+			var month = $('#month').val();
+			loadPage('report/reportData?year='+year+'&month='+month);
+		})
+	    
+		console.log($(".user-total").text().length)
+		if($(".user-total").text().length > 4 || $(".sub-total").text().length > 4){
+			$(".total-num").css("font-size","45px");
+		}
+		
+		]]>
+	</script>
+

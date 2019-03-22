@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.message.mapper.TbMessageManageDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.message.entity.TbMessageManage">
+		<id column="id" property="id" />
+		<result column="info_id" property="infoId" />
+		<result column="info_title" property="infoTitle" />
+		<result column="content" property="content" />
+		<result column="message_name" property="messageName" />
+		<result column="message_time" property="messageTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, info_id AS infoId, info_title AS infoTitle, content, message_name AS messageName, message_time AS messageTime
+    </sql>
+
+	<select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select m.id,m.content,n.title as info_title,me.nickname as message_name,m.message_time
+		from tb_message_manage m left join tb_news_info n ON m.info_id = n.id
+		left join tb_member me on m.mem_id=me.id
+		<where>
+			<if test="infoTitle !=null and infoTitle != ''">
+				and n.title like CONCAT('%',#{infoTitle},'%')
+			</if>
+			<if test="messageName !=null and messageName != ''">
+				and me.nickname like CONCAT('%',#{messageName},'%')
+			</if>
+			<if test="from != null and from != ''">
+				and DATE_FORMAT(m.message_time,'%Y-%m-%d') &gt;= DATE_FORMAT(#{from},'%Y-%m-%d')
+			</if>	
+			
+			<if test="to != null and to != ''">
+				and DATE_FORMAT(m.message_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{to},'%Y-%m-%d')
+			</if>
+			<if test="id !=null and id != ''">
+				and m.id = #{id}
+			</if>
+		</where>
+		order by m.message_time desc
+	</select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.admin.base.resource.mapper.TbResourceMapper">
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.admin.base.resource.entity.TbResource">
+		<id column="s_id" property="id" />
+		<result column="s_parent_id" property="parentId" />
+		<result column="s_name" property="name" />
+		<result column="s_source_key" property="sourceKey" />
+		<result column="s_type" property="type" />
+		<result column="s_source_url" property="sourceUrl" />
+		<result column="s_icon" property="icon" />
+		<result column="s_is_hide" property="isHide" />
+		<result column="s_description" property="description" />
+		<result column="s_create_time" property="createTime" />
+		<result column="s_update_time" property="updateTime" />
+		<result column="s_selected" property="selected" />
+		<result column="s_parent_name" property="parentName" />
+	</resultMap>
+
+	<select id="findResourcesByUserId" parameterType="int" resultMap="BaseResultMap" flushCache="true" useCache="true">
+		SELECT s.* FROM tb_resource s, tb_resources_role sr, tb_role r, tb_role_user ru
+		WHERE s.s_id = sr.s_id AND sr.r_id = r.r_id AND r.r_id = ru.r_id AND ru.u_id=${userId}
+	</select>
+	
+	<select id="findResourcesMenuByUserId" resultMap="BaseResultMap" flushCache="true" useCache="true">
+		SELECT s.* FROM tb_resource s, tb_resources_role sr, tb_role r, tb_role_user ru
+		WHERE s.s_id = sr.s_id AND sr.r_id = r.r_id AND r.r_id = ru.r_id AND s.s_type !=2 AND ru.u_id=${userId} order by s.s_id
+	</select>
+	
+	<select id="queryResourceList" parameterType="map" resultMap="BaseResultMap" flushCache="true" useCache="true">
+		SELECT t1.s_id,
+			t1.s_parent_id,
+			t1.s_name,
+			t2.s_name AS s_parentName,
+			t1.s_source_key,
+			t1.s_type,
+			t1.s_source_url,
+			t1.s_icon,
+			t1.s_is_hide,
+			t1.s_description,
+			t1.s_create_time,
+			t1.s_update_time,
+		CASE WHEN t3.s_id IS NULL THEN FALSE ELSE TRUE END AS s_selected
+		FROM tb_resource t1 LEFT JOIN tb_resource t2 ON t1.s_parent_id = t2.s_id 
+		LEFT JOIN tb_resources_role t3 on t1.s_id = t3.s_id and t3.r_id=${roleId}
+		<where>
+			<if test="isHide != null">
+				and t1.s_is_hide=${isHide}
+			</if>
+			<if test="type != null">
+				and t1.s_type=${type}
+			</if>
+			<if test="role != 'administrator'">
+				 AND t1.s_id NOT in (4,13,14,15)
+			</if>
+		</where>
+	</select>
+	<select id="selectResourceList" parameterType="map" resultMap="BaseResultMap">
+		SELECT t1.s_id,
+			t1.s_parent_id,
+			t1.s_name,
+			t2.s_name AS s_parent_name,
+			t1.s_source_key,
+			t1.s_type,
+			t1.s_source_url,
+			t1.s_icon,
+			t1.s_is_hide,
+			t1.s_description,
+			t1.s_create_time,
+			t1.s_update_time 
+		FROM tb_resource t1 LEFT JOIN tb_resource t2 ON t1.s_parent_id = t2.s_id
+		<where>
+			<if test="name != null and name != ''">
+				and t1.s_name=#{name}
+			</if>
+			<if test="isHide != null">
+				and t1.s_is_hide=${isHide}
+			</if>
+			<if test="type != null and type!=-1">
+				and t1.s_type=${type}
+			</if>
+		</where>
+		order by t1.s_id desc,  t1.s_update_time desc , t1.s_create_time desc
+	</select>
+	
+</mapper>

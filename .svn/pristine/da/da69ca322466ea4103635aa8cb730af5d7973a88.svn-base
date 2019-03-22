@@ -1,0 +1,181 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	padding-right: 3% !important;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">留言管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								資訊標題：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field" placeholder="資訊標題" id="infoTitle" th:value="${infoTitle}" />
+								</div>
+							</div>
+						</div>
+	
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								留言人：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field" placeholder="留言人" id="messageName" th:value="${messageName}"/>
+								</div>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-6">
+							<label class="label-weight am-left fabu">留言时间： </label>
+							<div classs="tpl-form-border-form">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-sm-12 table-top-border">
+						</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>序號</th>
+									<th style="width: 45%;" >留言內容</th>
+									<th>資訊標題</th>
+									<th>留言人</th>
+									<th>留言時間</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${recordStat.index+1}"></td>
+									<td style="width: 45%;" th:text="${record.content}"></td>
+									<td><a th:href="'https://www.upknowledge.com.hk/#/infoDetail?id='+${record.infoId}" target="_blank" th:text="${record.infoTitle}" ></a></td>
+									<td th:text="${record.messageName}"></td>
+									<td th:text="${#dates.format(record.messageTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:del(\'message/'+${record.id}+'/delete\',\'message/listUI\');'"  shiro:hasPermission="message:delete"> <i class="am-icon-trash"></i> 刪除</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+	 	function params() {
+		 	var infoTitle = $('#infoTitle').val();
+			var messageName = $('#messageName').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			var jsonParam = {
+				"infoTitle":infoTitle,
+				"messageName":messageName,
+				"from":from,
+				"to":to
+			}
+			return jsonParam;
+	 	}
+		initPageToJson([[${page.pages}]],[[${page.current}]],'message/listUI',params());
+	    
+		function search(){
+			loadPageToJson('message/listUI',params());
+		}
+		
+		function allEmpty() {
+			$("#infoTitle").val('');
+			$("#messageName").val('');
+			$(".empty").removeAttr('value');
+		}
+		
+
+		
+		]]>
+	</script>
+
+
+

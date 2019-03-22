@@ -1,0 +1,411 @@
+<style>
+.tpl-table-list-select {
+	text-align: left;
+	width: 470px;
+}
+
+#statusChange {
+	width: 350px;
+}
+.am-u-sm-4,label,input{
+	padding-right:0px !important;
+	padding-left: 0px !important;
+}
+
+.label-weight{
+	font-weight: bold;
+} 
+.fabu{
+	padding-right: 3% !important;
+}
+.am-left{
+	float:left;
+}
+.table-top-border{
+	border-top: 1px solid #eef1f5;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+</style>
+<div class="row-content am-cf">
+	<div class="row">
+		<div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+			<div class="widget am-cf">
+				<div class="widget-head am-cf">
+					<div class="widget-title  am-cf">創作天地管理</div>
+				</div>
+				<div class="widget-body  am-fr">
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								作品名稱：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field" placeholder="作品名稱" id="name" th:value="${name}" />
+								</div>
+							</div>
+						</div>
+	
+						<input type="hidden" id="sort" name="sort" th:value="${sort}"/>
+						<input type="hidden" id="isAsc" name="isAsc" th:value="${isAsc}"/>
+						
+						<div class="am-u-sm-12 am-u-lg-7" style="float:left">
+							<label class="label-weight am-left fabu">創建時間： </label>
+							<div classs="tpl-form-border-form">
+								<input type="text" id="from" class="empty date-input" name="from" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${from}" /> 
+								<span>至</span>
+								<input type="text" id="to" class="empty date-input" name="to" placeholder="yyyy-mm-dd" readonly="readonly" th:value="${to}" />
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								學生姓名：
+							</div>
+							<div class="am-u-sm-8">
+								<div class="am-form-group am-input-group-sm tpl-form-border-form cl-p">
+									<input type="text" class="am-form-field" placeholder="作品名稱" id="studentName" th:value="${studentName}" />
+								</div>
+							</div>
+						</div>
+					
+						<div class="am-u-sm-12 am-u-lg-3">
+							<div class="am-u-sm-4 label-weight">
+								作品類型：
+							</div>
+							<div class="tpl-table-list-select">
+								<select id="type" class="selectReset" data-am-selected="{btnWidth: '180px'}"> 
+									<option value="-1">請選擇</option>
+									<option value="0" th:selected="${type} eq 0">書法</option>
+									<option value="1" th:selected="${type} eq 1">繪畫</option>
+									<option value="2" th:selected="${type} eq 2">攝影</option>
+									<option value="3" th:selected="${type} eq 3">多媒體</option>
+									<option value="4" th:selected="${type} eq 4">作文</option>
+									<option value="5" th:selected="${type} eq 5">其他</option>
+								</select>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3"  style="float:left">
+							<div class="am-u-sm-4 label-weight">
+								狀態：
+							</div>
+							<div class="tpl-table-list-select">
+								<select id="status" class="selectReset" data-am-selected="{btnWidth: '180px'}"> 
+									<option value="0">請選擇</option>
+									<option value="1" th:selected="${status} eq 1">上架</option>
+									<option value="2" th:selected="${status} eq 2">下架</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12">
+						<div class="am-u-sm-12 am-u-lg-3"  style="float:left">
+							<div class="am-u-sm-4 label-weight">
+								首頁推薦：
+							</div>
+							<div class="tpl-table-list-select">
+								<select id="isHome" class="selectReset" data-am-selected="{btnWidth: '180px'}"> 
+									<option value="0">請選擇</option>
+									<option value="1" th:selected="${isHome} eq 1">是</option>
+									<option value="2" th:selected="${isHome} eq 2">否</option>
+								</select>
+							</div>
+						</div>
+						<div class="am-u-sm-12 am-u-lg-3"  style="float:left">
+							<div class="am-u-sm-4 label-weight">
+								作品推薦：
+							</div>
+							<div class="tpl-table-list-select">
+								<select id="recommendWorks" class="selectReset" data-am-selected="{btnWidth: '180px'}"> 
+									<option value="0">請選擇</option>
+									<option value="1" th:selected="${recommendWorks} eq 1">是</option>
+									<option value="2" th:selected="${recommendWorks} eq 2">否</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="am-u-sm-12" style="padding-bottom:10px;margin-top: 10px;">
+						<div class="am-u-sm-12 am-u-lg-3" style="float:left;">
+							<div class="tpl-table-list-select">
+								<div>
+									<button class="am-btn am-btn-primary am-btn-sm am-round"
+										type="button" onclick="search()">搜索</button>
+									<button class="am-btn am-btn-warning am-btn-sm am-round"
+										type="button" onclick="allEmpty()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="am-u-sm-12 table-top-border">
+						<div class="am-u-sm-12 am-u-md-3 am-u-lg-1">
+							<div class="am-form-group">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button shiro:hasPermission="creation:add" type="button"
+											class="am-btn am-btn-default am-btn-success"
+											onclick="loadPage('creation/form')">
+											<span class="am-icon-plus"></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+						<table width="100%"
+							class="am-table am-table-compact am-table-striped tpl-table-black "
+							id="example-r">
+							<thead>
+								<tr>
+									<th>權重</th>
+									<th>作品名稱</th>
+									<th>作品類型</th>
+									<th>學生姓名</th>
+									<th>學校</th>
+									<th>創建人</th>
+									<th>創建時間<div id="click-sort"><div id="sort-asc" onclick="sortAsc('create_time');" th:style="${(sort eq 'create_time' && isAsc eq 'true') ? 'color:#666565' : ''}"><i class="am-icon-sort-asc"></i></div><div  id="sort-desc" onclick="sortDesc('create_time');" th:style="${(sort eq 'create_time' && isAsc eq 'false') ? 'color:#666565' : ''}"><i class="am-icon-sort-desc"></i></div></div></th>
+									<th>首頁推薦</th>
+									<th>作品推薦</th>
+									<th>狀態</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="gradeX" th:each="record,recordStat:${page.records}">
+									<td th:text="${record.weight}"></td>
+									<td th:text="${record.name}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.type == 0}">書法</span>
+										<span th:if="${record.type == 1}">繪畫</span>
+										<span th:if="${record.type == 2}">攝影</span>
+										<span th:if="${record.type == 3}">多媒體</span>
+										<span th:if="${record.type == 4}">作文</span>
+										<span th:if="${record.type == 5}">其他</span>
+									</td>
+									<td th:text="${record.studentName}"></td>
+									<td th:text="${record.school}"></td>
+									<td th:text="${record.createUser}"></td>
+									<td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td class="am-text-middle">
+										<span th:if="${record.isHome == 1}">是</span>
+										<span th:if="${record.isHome == 2}">否</span>
+									</td>
+									<td class="am-text-middle">
+										<span th:if="${record.recommendWorks == 1}">是</span>
+										<span th:if="${record.recommendWorks == 2}">否</span>
+									</td>
+									<td class="am-text-middle">
+										<span th:if="${record.status == 1}" class='am-badge am-badge-success'>上架</span>
+										<span th:if="${record.status == 2}" class='am-badge am-badge-warning'>下架</span>
+									</td>
+									<td>
+										<div class="tpl-table-black-operation">
+											<a href="javascript:;" th:onclick="'javascript:loadPage(\'creation/'+${record.id}+'/select\');'" shiro:hasPermission="creation:edit"> <i class="am-icon-pencil"></i> 編輯</a>
+											<a href="javascript:;" class="tpl-table-black-operation-warning warning-btn" th:onclick="'javascript:del(\'creation/'+${record.id}+'/delete\',\'creationkeyword/listUI\');'" shiro:hasPermission="creation:delete"> <i class="am-icon-trash"></i> 删除</a>
+											<a href="javascript:;" th:if="${record.status==2}" th:onclick="'javascript:changeStatus('+${record.id}+',1);'"
+												class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="creation:shelf"><i class="am-icon-level-up"></i>上架</a>
+											<a href="javascript:;" th:if="${record.status==1}" th:onclick="'javascript:changeStatus('+${record.id}+',2);'"
+												class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="creation:shelf"><i class="am-icon-level-down"></i>下架</a>
+											<a title="首頁推薦" href="javascript:;" th:if="${record.isHome==2}" th:onclick="'javascript:changeIsHome('+${record.id}+',1);'"
+												class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="creation:isHome"><i class="am-icon-level-up"></i>推薦</a>
+											<a title="首頁推薦" href="javascript:;" th:if="${record.isHome==1}" th:onclick="'javascript:changeIsHome('+${record.id}+',2);'"
+												class="tpl-table-black-operation-warning warning-btn" shiro:hasPermission="creation:isHome"><i class="am-icon-level-down"></i>取消推薦</a>
+										</div>
+									</td>
+								</tr>
+								<!-- more data -->
+							</tbody>
+						</table>
+					</div>
+					<div class="am-u-lg-12 am-cf">
+
+						<div class="am-fr">
+							<ul class="am-pagination tpl-pagination">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	<![CDATA[
+
+		$("#from").datepicker({
+		      defaultDate: "+1w",
+		      changeMonth: true,
+		      numberOfMonths: 3,
+		      onClose: function(selectedDate) {
+		    	  console.log(selectedDate)
+		        $("#to").datepicker( "option", "minDate", selectedDate );
+		      }
+		    });
+	    $("#to").datepicker({
+	      defaultDate: "+1w",
+	      changeMonth: true,
+	      numberOfMonths: 3,
+	      onClose: function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate );
+	      }
+	    });
+		 
+	 	$('select').selected();
+	 	
+	 	function params(sort,isAsc) {
+	 		var name = $('#name').val();
+			var studentName = $('#studentName').val();
+			var type = $('#type').val();
+			var status = $('#status').val();
+			var isHome = $('#isHome').val();
+			var recommendWorks = $('#recommendWorks').val();
+			var from = $('#from').val();
+			var to = $('#to').val();
+			
+			if($("#sort").val()!=null && sort==null){
+				sort=$("#sort").val();
+			}
+			
+			if($("#isAsc").val()!=null && isAsc==null){
+				isAsc=$("#isAsc").val();
+			}
+			
+			var jsonParam = {
+				"name":name,
+				"studentName":studentName,
+				"type":type,
+				"status":status,
+				"isHome":isHome,
+				"recommendWorks":recommendWorks,
+				"from":from,
+				"to":to,
+				"sort":sort,
+				"isAsc":isAsc
+			}
+			return jsonParam;
+		}
+	 	
+	 	
+		initPageToJson([[${page.pages}]],[[${page.current}]],'creation/listUI',params());
+	    
+		function search(){
+			
+			loadPageToJson('creation/listUI',params());
+		}
+		
+		function changeStatus(id,status){
+			var context;
+			if (status == 1) {
+				context = '确认上架吗？'
+			}else{
+				context = '确认下架吗？'
+			}
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "creation/changeStatus/"+id+"/"+status,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('creation/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function changeIsHome(id,isHome){
+			var context;
+			if (isHome == 1) {
+				context = '确认設置為首頁推薦吗？'
+			}else{
+				context = '确认取消首頁推薦吗？'
+			}
+			
+			layer.confirm(context, {
+		        icon : 3,
+		        title : '提示'
+		    }, function(index, layero) {
+		        $.ajax({
+		            type : "GET",
+		            url :  "creation/changeIsHome/"+id+"/"+isHome,
+		            dataType : "json",
+		            success : function(resultdata) {
+		                if (resultdata.code=="0") {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 1
+		                    });
+		                    loadPage('creation/listUI');
+		                } else {
+		                    layer.msg(resultdata.msg, {
+		                        icon : 0
+		                    });
+		                }
+		            },
+		            error : function(errorMsg) {
+		                layer.msg('服務器未響應，請稍後重試！', {
+		                    icon : 3
+		                });
+		            }
+		        });
+		        layer.close(index);
+		    });
+		}
+		
+		function allEmpty() {
+			$("#name").val('');
+			$("#studentName").val('');
+			
+			$("#sort").val('create_time');
+			$("#isAsc").val('false');
+			
+			$("#type").val(-1).trigger('changed.selected.amui');
+			$("#status").val(0).trigger('changed.selected.amui');
+			$("#isHome").val(0).trigger('changed.selected.amui');
+			$("#recommendWorks").val(0).trigger('changed.selected.amui');
+			$(".empty").removeAttr('value');
+		}
+		
+		
+
+		function sortAsc(clum) {
+			$("#sort-desc").css("color","#c0bfbf");
+			$("#sort-asc").css("color","#666565");
+			loadPageToJson('creation/listUI',params(clum,true));
+			console.log(params(clum,true))
+		}
+		
+		function sortDesc(clum) {
+			$("#sort-desc").css("color","#666565");
+			$("#sort-asc").css("color","#c0bfbf");
+			loadPageToJson('creation/listUI',params(clum,false));
+			console.log(params(clum,false))
+		}
+		
+		
+		
+		]]>
+	</script>
+

@@ -1,0 +1,52 @@
+package com.knowledge.common.business.activity.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.knowledge.common.business.activity.bean.ActivityAndDraft;
+import com.knowledge.common.business.activity.entity.TbActivityEnrollManage;
+
+/**
+ * <p>
+ * 活动报名管理 Mapper 接口
+ * </p>
+ *
+ * @author xiong
+ * @since 2018-11-14
+ */
+public interface TbActivityEnrollManageDao extends BaseMapper<TbActivityEnrollManage> {
+
+	/**
+	 * 自定连表分页查询
+	 * 
+	 * @param page
+	 * @param map
+	 * @return
+	 */
+	List<TbActivityEnrollManage> selectByPage(Page<TbActivityEnrollManage> page, Map<String, Object> map);
+	
+	/**
+	 * 導出報表用
+	 * @param map
+	 * @return
+	 */
+	List<TbActivityEnrollManage> selectByPage(Map<String, Object> map);
+
+	/**
+	 * 根據報名ID查看活動詳情和報名信息
+	 * 
+	 * @param id
+	 * @return
+	 */
+	TbActivityEnrollManage selectAllById(Integer id);
+
+	/**
+	 * 根据用户名查询报名活动和投稿
+	 * 
+	 * @param createUser
+	 * @return
+	 */
+	List<ActivityAndDraft> selectActivityAndDraft(Page<ActivityAndDraft> page, Map<String, Object> map);
+}

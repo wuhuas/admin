@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.activity.mapper.TbPastActivityManageDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.activity.entity.TbPastActivityManage">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="status" property="status" />
+		<result column="enclosure_url" property="enclosureUrl" />
+		<result column="release_name" property="releaseName" />
+		<result column="release_time" property="releaseTime" />
+		<result column="activity_names" property="activityNames" />
+		<result column="activity_time" property="activityTime" />
+		<result column="activity_time_end" property="activityTimeEnd" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, content, status, is_review AS isReview, enclosure_url AS enclosureUrl, release_name AS releaseName, release_time AS releaseTime,activity_time AS activityTime,activity_time_end AS activityTimeEnd
+    </sql>
+	
+	<select id="selectByPage" resultMap="BaseResultMap">
+		SELECT
+			p.id,
+			p.title,
+			p.content,
+			p.STATUS,		
+			p.enclosure_url,
+			p.release_name,
+			p.release_time,
+			p.relation,
+			p.activity_time,
+			p.activity_time_end,
+			(SELECT group_concat(title) FROM tb_past_activity_manage WHERE FIND_IN_SET(id,p.relation) and status=1) as activity_names
+		FROM
+			tb_past_activity_manage p
+		${ew.sqlSegment}
+	</select>
+</mapper>

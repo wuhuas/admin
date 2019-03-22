@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.common.business.periodical.mapper.TbElectronicsMagazineOrderDao">
+
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.common.business.periodical.entity.TbElectronicsMagazineOrder">
+		<id column="id" property="id" />
+		<result column="order_name" property="orderName" />
+		<result column="student_name" property="studentName" />
+		<result column="grade" property="grade" />
+		<result column="school" property="school" />
+		<result column="register_mail" property="registerMail" />
+		<result column="register_time" property="registerTime" />
+		<result column="order_mail" property="orderMail" />
+		<result column="order_time" property="orderTime" />
+		<result column="whatsapp" property="whatsapp" />
+		<result column="wechat" property="wechat" />
+		<result column="adress" property="adress" />
+		<result column="phone" property="phone" />
+		<result column="subscribe_year" property="subscribeYear" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_name AS orderName, student_name AS studentName, grade, school, register_mail AS registerMail, register_time AS registerTime, order_mail AS orderMail, order_time AS orderTime, whatsapp, wechat, adress, phone, subscribe_year AS subscribeYear, start_time AS startTime, end_time AS endTime
+    </sql>
+
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledge.admin.base.user.mapper.TbUserMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.knowledge.admin.base.user.entity.TbUser">
+		<id column="u_id" property="id" />
+		<result column="u_name" property="userName" />
+		<result column="u_account_name" property="accountName" />
+		<result column="u_password" property="password" />
+		<result column="u_delete_status" property="deleteStatus" />
+		<result column="u_locked" property="locked" />
+		<result column="u_description" property="description" />
+		<result column="u_credentials_salt" property="credentialsSalt" />
+		<result column="u_creator_name" property="creatorName" />
+		<result column="u_create_time" property="createTime" />
+		<result column="u_update_time" property="updateTime" />
+ 		<association property="role" column="id" javaType="com.knowledge.admin.base.role.entity.TbRole">
+			<id property="id" column="r_id"/>
+			<result property="name" column="r_name"/>
+			<result property="key" column="r_key"/>
+			<result property="status" column="r_status"/>
+			<result property="description" column="r_description"/>
+			<result property="createTime" column="r_create_time"/>
+			<result property="updateTime" column="r_update_time"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectUserList" resultMap="BaseResultMap">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time,
+		r.r_id,
+		r.r_name,
+		r.r_key,
+		r.r_status,
+		r.r_description,
+		r.r_create_time,
+		r.r_update_time
+		FROM tb_user u LEFT JOIN tb_role_user ru ON u.u_id = ru.u_id LEFT JOIN tb_role r ON ru.r_id = r.r_id 
+		<where>
+			<if test="loginRole != 'administrator'">
+				r.r_key &lt;&gt; 'administrator'
+			</if>
+			<if test="name != null and name != ''">
+				and u.u_name LIKE CONCAT('%',#{name},'%' ) OR u.u_account_name LIKE CONCAT('%',#{name},'%' )
+			</if>
+		</where>
+		order by r.r_update_time desc,r.r_create_time desc
+	</select>
+	<select id="selectUserRole" resultMap="BaseResultMap" parameterType="map">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time,
+		r.r_id,
+		r.r_name,
+		r.r_key,
+		r.r_status,
+		r.r_description,
+		r.r_create_time,
+		r.r_update_time
+		FROM tb_user u LEFT JOIN tb_role_user ru ON u.u_id = ru.u_id LEFT JOIN tb_role r ON ru.r_id = r.r_id 
+		<where>
+			<if test="userId != null and userId != ''">
+				u.u_id=#{userId}
+			</if>
+			<if test="accountName != null and accountName != ''">
+				u.u_account_name=#{accountName}
+			</if>
+		</where>
+	</select>
+	
+	
+</mapper>

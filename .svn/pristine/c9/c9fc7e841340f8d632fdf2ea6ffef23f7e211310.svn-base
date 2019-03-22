@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>demo</title>
+    <style>
+        .btn{
+            background: #f56c6c;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid #f56c6c;
+            -webkit-appearance: none;
+            text-align: center;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            margin: 20px 0;
+            transition: .1s;
+            font-weight: 500;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <p>尊敬的  <span th:text="${nickName}"></span>，</p><br>
+	<p>你好！</p><br>
+    <p>你正在使用知識網密碼找回功能，請點擊下方連結重置密碼</p>
+	<p>（<a th:href="@{${url}}"><span th:text="${url}"></span></a> 该链接在30分钟内有效）</p><br><br>
+    <p>密碼重置後，你可隨時登入 <a th:href="@{${homeUrl}}">知識網</a> ，到「個人中心」內的「更改用戶資料」完善個人資料。</p><br><br>
+	<p>如非本人操作，請忽略此郵件。</p><br><br>
+    <img src="https://upknowledge.oss-cn-hongkong.aliyuncs.com/content/20181218/logo20181218160451958.jpg" width="100" height="100" />
+    <p>知識網運營團隊 </p>
+</div>
+</body>
+</html>

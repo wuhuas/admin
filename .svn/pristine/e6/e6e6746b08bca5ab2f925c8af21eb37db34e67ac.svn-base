@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="1047802779222-5pll1v3nua55tgb1165pje2v2rc05gfm.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
+</head>
+<body>
+
+
+<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    
+    <script>
+      function onSignIn(googleUser) {
+        // 客户端如果有需要的话可以通过profile来获取用户信息
+        var profile = googleUser.getBasicProfile();
+        // 传回后台验证，并获取userid
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/verifyToken');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+          console.log('Signed in as: ' + xhr.responseText);
+        };
+        xhr.send('idtokenstr=' + id_token);
+      };
+      
+      function signOut() {
+    	    var auth2 = gapi.auth2.getAuthInstance();
+    	    auth2.signOut().then(function () {
+    	      console.log('User signed out.');
+    	    });
+    	  }
+    </script>
+
+</body>
+</html>
